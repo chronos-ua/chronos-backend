@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+npx git-format-staged --formatter 'prettier --stdin-filepath "{}"' 'src/*.ts'
