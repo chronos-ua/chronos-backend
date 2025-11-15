@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/pvlvld/chronos-backend#readme",
   "devDependencies": {
-    "@types/node": "^24.9.2",
+    "@types/node": "^24.10.1",
     "git-format-staged": "^3.1.1",
     "husky": "^9.1.7",
     "typescript": "^5.9.3"
