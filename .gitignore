@@ -69,3 +69,5 @@ public/
 
 *.py
 *.txt
+
+bun.lock
