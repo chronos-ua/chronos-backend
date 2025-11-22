@@ -8,7 +8,7 @@ export class UwsSocketIoAdapter extends IoAdapter {
   createIOServer(port: number, options?: ServerOptions): Server {
     const uwsApp: TemplatedApp = App();
 
-    const server = super.createIOServer(this.wsPort, {
+    const server = super.createIOServer(0, {
       ...options,
       cors: {
         origin: "*", // TODO: Configure for prod!
