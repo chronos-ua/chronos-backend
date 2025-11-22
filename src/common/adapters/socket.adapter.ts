@@ -2,6 +2,7 @@ import { IoAdapter } from "@nestjs/platform-socket.io";
 import { ServerOptions, Server } from "socket.io";
 import { App, TemplatedApp } from "uWebSockets.js";
 
+// https://socket.io/docs/v4/server-installation/#usage-with-uwebsockets
 export class UwsSocketIoAdapter extends IoAdapter {
   private readonly wsPort = 3001;
 
