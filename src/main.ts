@@ -9,7 +9,8 @@ import { UwsSocketIoAdapter } from "./common/adapters/socket.adapter";
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter()
+    new FastifyAdapter(),
+    { bodyParser: false }
   );
 
   app.useWebSocketAdapter(new UwsSocketIoAdapter(app));
