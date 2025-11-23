@@ -1,0 +1,21 @@
+services:
+  mongodb:
+    image: mongo:8
+    container_name: chronos_mongodb
+    hostname: chronos_mongodb
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - ./mongodb_data:/data/db
+    restart: unless-stopped
+
+  redis:
+    image: redis:8-alpine
+    container_name: chronos_redis
+    hostname: chronos_redis
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - ./redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
