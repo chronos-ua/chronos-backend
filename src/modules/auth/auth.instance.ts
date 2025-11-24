@@ -7,6 +7,9 @@ import sqlite from "node:sqlite";
 
 export const auth = betterAuth({
   database: new sqlite.DatabaseSync("auth.sqlite"),
+  emailAndPassword: {
+    enabled: false
+  },
   // Speed up relational queries
   // https://www.better-auth.com/docs/adapters/sqlite#joins-experimental
   experimental: {
