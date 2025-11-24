@@ -17,6 +17,12 @@ export const auth = betterAuth({
       strategy: "compact"
     }
   },
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+    }
+  },
   // Speed up relational queries
   // https://www.better-auth.com/docs/adapters/sqlite#joins-experimental
   experimental: {
