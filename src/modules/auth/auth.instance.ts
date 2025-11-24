@@ -6,5 +6,10 @@ import sqlite from "node:sqlite";
 // const redis = new Redis();
 
 export const auth = betterAuth({
-  database: new sqlite.DatabaseSync("auth.sqlite")
+  database: new sqlite.DatabaseSync("auth.sqlite"),
+  // Speed up relational queries
+  // https://www.better-auth.com/docs/adapters/sqlite#joins-experimental
+  experimental: {
+    joins: true
+  }
 });
