@@ -10,6 +10,13 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: false
   },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 15, // 15 minutes,
+      strategy: "compact"
+    }
+  },
   // Speed up relational queries
   // https://www.better-auth.com/docs/adapters/sqlite#joins-experimental
   experimental: {
