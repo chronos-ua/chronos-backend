@@ -78,3 +78,5 @@ tsconfig.tsbuildinfo
 *.txt
 
 bun.lock
+
+auth.sqlite
