@@ -58,13 +58,20 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # PostgreSQL data
 /postgres
 
+# MySQL data
+/mysql_data
+
+# MongoDB data
+/mongodb_data
+
+# Redis data
+/redis_data
+
 /data/active/
 /build
 /prisma/client
 tsconfig.tsbuildinfo
 
-/mysql_data
-public/
 .adminjs
 
 *.py
