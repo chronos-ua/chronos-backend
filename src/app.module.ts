@@ -7,6 +7,7 @@ import { WeatherModule } from "./modules/weather/weather.module";
 import { RedisModule } from "./common/redis/redis.module";
 import { CalendarModule } from "./modules/calendar/calendar.module";
 import { MongooseModule } from "@nestjs/mongoose";
+import { UsersModule } from "./modules/users/users.module";
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { MongooseModule } from "@nestjs/mongoose";
     AuthModule.forRoot({ auth }),
     WeatherModule,
     RedisModule,
-    CalendarModule
+    CalendarModule,
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService]
