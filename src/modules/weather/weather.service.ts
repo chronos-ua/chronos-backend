@@ -1,26 +1,28 @@
-import { Injectable } from "@nestjs/common";
-import { CreateWeatherDto } from "./dto/create-weather.dto";
-import { UpdateWeatherDto } from "./dto/update-weather.dto";
+import { IOREDIS_CLIENT } from "./../../common/redis/redis.module";
+import { Inject, Injectable } from "@nestjs/common";
+import Redis from "ioredis";
+import { getOrSet } from "src/common/utils/cache.util";
 
 @Injectable()
 export class WeatherService {
-  create(createWeatherDto: CreateWeatherDto) {
-    return "This action adds a new weather";
+  private readonly CACHE_PREFIX = "weather:v1:";
+  private readonly TTL_SECONDS = 1800; // 30m
+
+  constructor(@Inject(IOREDIS_CLIENT) private readonly redis: Redis) {}
+
+  async getWeather(city: string) {
+    return await getOrSet(
+      this.redis,
+      `${this.CACHE_PREFIX}${city.toLowerCase()}`,
+      this.TTL_SECONDS,
+      () => this.fetchFromProvider(city)
+    );
   }
 
-  findAll() {
-    return `This action returns all weather`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} weather`;
-  }
-
-  update(id: number, updateWeatherDto: UpdateWeatherDto) {
-    return `This action updates a #${id} weather`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} weather`;
+  private async fetchFromProvider(city: string) {
+    console.warn(
+      "[WeatherService] fetchFromProvider is not implemented, returning mock data"
+    );
+    return { city, temp: 20, condition: "cloudy", timestamp: Date.now() };
   }
 }
