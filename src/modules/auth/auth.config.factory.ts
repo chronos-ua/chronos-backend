@@ -1,14 +1,19 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
+import Redis from "ioredis";
 
-// TODO: Redis?
-// import Redis from "ioredis";
-// const redis = new Redis();
-
-export function createAuth(db: any) {
+export function createAuth(db: any, redis: Redis) {
   return betterAuth({
-    // database: new sqlite.DatabaseSync("auth.sqlite"),
     database: mongodbAdapter(db),
+    // Use Redis as secondary storage for things like session cookies, rate limiting, etc.
+    secondaryStorage: {
+      get: async (key) => await redis.get(key),
+      set: async (key, value, ttl) => {
+        if (ttl) await redis.set(key, JSON.stringify(value), "EX", ttl);
+        else await redis.set(key, JSON.stringify(value));
+      },
+      delete: async (key) => void (await redis.del(key))
+    },
     emailAndPassword: {
       enabled: false
     },
