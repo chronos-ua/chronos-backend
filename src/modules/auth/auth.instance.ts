@@ -27,5 +27,10 @@ export const auth = betterAuth({
   // https://www.better-auth.com/docs/adapters/sqlite#joins-experimental
   experimental: {
     joins: true
+  },
+  account: {
+    accountLinking: {
+      enabled: true
+    }
   }
 });
