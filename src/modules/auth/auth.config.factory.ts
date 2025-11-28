@@ -15,7 +15,7 @@ export function createAuth(db: any, redis: Redis) {
       delete: async (key) => void (await redis.del(key))
     },
     emailAndPassword: {
-      enabled: false
+      enabled: true
     },
     session: {
       cookieCache: {
