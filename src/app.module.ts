@@ -24,7 +24,10 @@ import { EmailService } from "./common/services/email.service";
         redis: Redis,
         emailService: EmailService
       ) => {
-        return { auth: createAuth(connection.db, redis, emailService) };
+        return {
+          auth: createAuth(connection.db, redis, emailService),
+          disableBodyParser: true
+        };
       }
     }),
     WeatherModule,
