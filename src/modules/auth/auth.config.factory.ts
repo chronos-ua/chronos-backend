@@ -17,7 +17,19 @@ export function createAuth(db: any, redis: Redis, emailService: EmailService) {
       delete: async (key) => void (await redis.del(key))
     },
     emailAndPassword: {
-      enabled: true
+      enabled: true,
+      sendResetPassword: async ({ user, url, token }, request) => {
+        if (user?.email && token) {
+          await emailService.sendPasswordResetEmail(user.email, url, token);
+        }
+      },
+      onPasswordReset: async ({ user }, request) => {
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`Password reset for user ${user?.email}`);
+        } else {
+          throw new Error("onPasswordReset not implemented");
+        }
+      }
     },
     emailVerification: {
       sendVerificationEmail: async ({ user, url, token }) => {

@@ -21,12 +21,17 @@ class EmailService {
     this.sender = `"Chronos" <${senderEmail}>`;
   }
 
-  public async sendPasswordResetEmail(email: string, token: string) {
+  public async sendPasswordResetEmail(
+    email: string,
+    url: string,
+    token: string
+  ) {
     const mailOptions: nodemailer.SendMailOptions = {
       from: this.sender,
       to: email,
       subject: "Password Reset",
-      html: EMAIL_TEMPLATES.resetPassword(this.getEmailResetLink(token))
+      // html: EMAIL_TEMPLATES.resetPassword(this.getEmailResetLink(token))
+      html: EMAIL_TEMPLATES.resetPassword(url)
     };
 
     try {
