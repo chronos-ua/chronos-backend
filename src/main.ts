@@ -16,7 +16,9 @@ async function bootstrap() {
   app.useWebSocketAdapter(new UwsSocketIoAdapter(app));
 
   // TODO: cors?
-  //   app.enableCors();
+  app.enableCors({
+    origin: "*"
+  });
   const port = process.env.HTTP_PORT || 3000;
 
   await app.listen(port, "0.0.0.0", () => {
