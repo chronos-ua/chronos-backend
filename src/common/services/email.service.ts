@@ -36,13 +36,18 @@ class EmailService {
     }
   }
 
-  public async sendEmailVerification(email: string, token: string) {
+  public async sendEmailVerification(
+    email: string,
+    url: string,
+    token: string
+  ) {
     const mailOptions: nodemailer.SendMailOptions = {
       from: this.sender,
       to: email,
       subject: "Email Verification",
       html: EMAIL_TEMPLATES.emailConfirmation(
-        this.getEmailVerificationLink(token)
+        // this.getEmailVerificationLink(token)
+        url
       )
     };
 

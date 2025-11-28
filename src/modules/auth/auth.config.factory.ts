@@ -19,9 +19,9 @@ export function createAuth(db: any, redis: Redis, emailService: EmailService) {
       enabled: true
     },
     emailVerification: {
-      sendVerificationEmail: async ({ user, token }) => {
+      sendVerificationEmail: async ({ user, url, token }) => {
         if (user?.email && token) {
-          await emailService.sendEmailVerification(user.email, token);
+          await emailService.sendEmailVerification(user.email, url, token);
         }
       }
     },
