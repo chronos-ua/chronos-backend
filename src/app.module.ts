@@ -10,6 +10,8 @@ import { MongooseModule, getConnectionToken } from "@nestjs/mongoose";
 import { UsersModule } from "./modules/users/users.module";
 import { Connection } from "mongoose";
 import Redis from "ioredis";
+import { EmailModule } from "./common/services/email.module";
+import { EmailService } from "./common/services/email.service";
 
 @Module({
   imports: [
@@ -23,6 +25,7 @@ import Redis from "ioredis";
     }),
     WeatherModule,
     RedisModule,
+    EmailModule,
     CalendarModule,
     UsersModule
   ],
