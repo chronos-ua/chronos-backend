@@ -5,6 +5,7 @@ import { EmailService } from "../../common/services/email.service";
 
 export function createAuth(db: any, redis: Redis, emailService: EmailService) {
   return betterAuth({
+    baseURL: process.env.BASE_URL || "http://localhost:3000",
     database: mongodbAdapter(db),
     // Use Redis as secondary storage for things like session cookies, rate limiting, etc.
     secondaryStorage: {
