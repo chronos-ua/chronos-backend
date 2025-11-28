@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import nodemailer from "nodemailer";
-import { EMAIL_TEMPLATES } from "../consts/emailTemplates";
-import { InternalServerError } from "../consts/errors";
+import { EMAIL_TEMPLATES } from "../consts/emailTemplates.js";
+import { InternalServerError } from "../consts/errors.js";
 
 export const EMAIL_TRANSPORTER = Symbol("EMAIL_TRANSPORTER");
 
@@ -18,7 +18,7 @@ class EmailService {
       process.env.EMAIL_ID ||
       process.env.SMTP_EMAIL ||
       "user@example.com";
-    this.sender = `"Usof" <${senderEmail}>`;
+    this.sender = `"Chronos" <${senderEmail}>`;
   }
 
   public async sendPasswordResetEmail(email: string, token: string) {
@@ -71,11 +71,11 @@ class EmailService {
   }
 
   private getEmailResetLink(token: string) {
-    return `https://usof.pp.ua/auth/password-reset/${token}`;
+    return `https://uevent.pp.ua/auth/password-reset/${token}`;
   }
 
   private getEmailVerificationLink(token: string) {
-    return `https://usof.pp.ua/auth/verify-email/${token}`;
+    return `https://uevent.pp.ua/auth/verify-email/${token}`;
   }
 }
 
