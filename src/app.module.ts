@@ -17,10 +17,14 @@ import { EmailService } from "./common/services/email.service";
   imports: [
     MongooseModule.forRoot("mongodb://localhost/nest", {}),
     AuthModule.forRootAsync({
-      imports: [MongooseModule, RedisModule],
-      inject: [getConnectionToken(), IOREDIS_CLIENT],
-      useFactory: (connection: Connection, redis: Redis) => {
-        return { auth: createAuth(connection.db, redis) };
+      imports: [MongooseModule, RedisModule, EmailModule],
+      inject: [getConnectionToken(), IOREDIS_CLIENT, EmailService],
+      useFactory: (
+        connection: Connection,
+        redis: Redis,
+        emailService: EmailService
+      ) => {
+        return { auth: createAuth(connection.db, redis, emailService) };
       }
     }),
     WeatherModule,

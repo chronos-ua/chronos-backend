@@ -1,8 +1,9 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import Redis from "ioredis";
+import { EmailService } from "../../common/services/email.service";
 
-export function createAuth(db: any, redis: Redis) {
+export function createAuth(db: any, redis: Redis, emailService: EmailService) {
   return betterAuth({
     database: mongodbAdapter(db),
     // Use Redis as secondary storage for things like session cookies, rate limiting, etc.
@@ -16,6 +17,13 @@ export function createAuth(db: any, redis: Redis) {
     },
     emailAndPassword: {
       enabled: true
+    },
+    emailVerification: {
+      sendVerificationEmail: async ({ user, token }) => {
+        if (user?.email && token) {
+          await emailService.sendEmailVerification(user.email, token);
+        }
+      }
     },
     session: {
       cookieCache: {
