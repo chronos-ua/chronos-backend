@@ -4,7 +4,9 @@ import { App, TemplatedApp } from "uWebSockets.js";
 
 // https://socket.io/docs/v4/server-installation/#usage-with-uwebsockets
 export class UwsSocketIoAdapter extends IoAdapter {
-  private readonly wsPort = 3001;
+  private readonly wsPort = process.env.WS_PORT
+    ? parseInt(process.env.WS_PORT)
+    : 3001;
 
   createIOServer(port: number, options?: ServerOptions): Server {
     const uwsApp: TemplatedApp = App();
