@@ -6,8 +6,16 @@ import {
   NestExpressApplication
 } from "@nestjs/platform-express";
 import express from "ultimate-express";
+import { NestApplicationOptions } from "@nestjs/common";
 
 async function bootstrap() {
+  const NestOptions: NestApplicationOptions = {};
+
+  NestOptions["bodyParser"] = false;
+  if (process.env.NODE_ENV !== "production") {
+    NestOptions["logger"] = ["error", "warn", "log", "debug", "verbose"];
+  }
+
   const app = await NestFactory.create<NestExpressApplication>(
     AppModule,
     new ExpressAdapter(express()),
