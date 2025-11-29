@@ -39,6 +39,7 @@ export function createAuth(db: any, redis: Redis, emailService: EmailService) {
       }
     },
     session: {
+      expiresIn: Number(process.env.SESSION_TTL) || 60 * 60 * 24 * 14, // 14 days
       cookieCache: {
         enabled: true,
         maxAge: 60 * 15, // 15 minutes,
