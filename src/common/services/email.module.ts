@@ -48,29 +48,6 @@ const buildOauthTransport = async () => {
   });
 };
 
-const buildSmtpTransport = async () => {
-  const port = Number(process.env.EMAIL_PORT ?? 587);
-  const secure =
-    process.env.EMAIL_SECURE === "true" || process.env.EMAIL_SECURE === "1"
-      ? true
-      : port === 465;
-
-  const authConfigured =
-    process.env.EMAIL_ID && process.env.EMAIL_PASS
-      ? {
-          user: process.env.EMAIL_ID,
-          pass: process.env.EMAIL_PASS
-        }
-      : undefined;
-
-  return nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port,
-    secure,
-    auth: authConfigured
-  });
-};
-
 const emailTransporterProvider = {
   provide: EMAIL_TRANSPORTER,
   useFactory: async () => {
