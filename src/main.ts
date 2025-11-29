@@ -14,8 +14,16 @@ async function bootstrap() {
     { bodyParser: false }
   );
 
+  const origins = process.env.CORS_ORIGINS
+    ? process.env.CORS_ORIGINS.split(",")
+    : ["*"];
+
+  if (process.env.BASE_URL && !origins.includes(process.env.BASE_URL)) {
+    origins.push(process.env.BASE_URL);
+  }
+
   app.enableCors({
-    origin: process.env.CORS_ORIGINS?.split(",") || "*",
+    origin: origins,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true
   });
