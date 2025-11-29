@@ -14,9 +14,10 @@ async function bootstrap() {
     { bodyParser: false }
   );
 
-  // TODO: cors?
   app.enableCors({
-    origin: "*"
+    origin: process.env.CORS_ORIGINS?.split(",") || "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    credentials: true
   });
 
   app.useWebSocketAdapter(new UwsSocketIoAdapter(app));
