@@ -12,6 +12,7 @@ import { Connection } from "mongoose";
 import Redis from "ioredis";
 import { EmailModule } from "./common/services/email.module";
 import { EmailService } from "./common/services/email.service";
+import { RequestsLogMiddleware } from "./common/middlewares/requests-log.middleware";
 
 @Module({
   imports: [
@@ -39,4 +40,13 @@ import { EmailService } from "./common/services/email.service";
   controllers: [AppController],
   providers: [AppService]
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  private readonly logger = new Logger(AppModule.name);
+
+  configure(consumer: MiddlewareConsumer) {
+    if (process.env.NODE_ENV !== "production") {
+      this.logger.log("RequestsLogMiddleware enabled");
+      consumer.apply(RequestsLogMiddleware).forRoutes("*");
+    }
+  }
+}
