@@ -5,7 +5,7 @@ import { getOrSet } from "src/common/utils/cache.util";
 
 @Injectable()
 export class WeatherService {
-  private readonly CACHE_PREFIX = "weather:v1:";
+  private readonly GLOBAL_CACHE_PREFIX = "weather:v1:";
   private readonly TTL_SECONDS = 1800; // 30m
 
   constructor(@Inject(IOREDIS_CLIENT) private readonly redis: Redis) {}
@@ -13,7 +13,8 @@ export class WeatherService {
   async getWeather(city: string) {
     return await getOrSet(
       this.redis,
-      `${this.CACHE_PREFIX}${city.toLowerCase()}`,
+      // weather:v1:<day of week>:<city>
+      `${this.GLOBAL_CACHE_PREFIX}${new Date().getDay()}:${city.toLowerCase()}`,
       this.TTL_SECONDS,
       () => this.fetchFromProvider(city)
     );
