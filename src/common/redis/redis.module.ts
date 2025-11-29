@@ -10,8 +10,8 @@ export const IOREDIS_CLIENT = "IOREDIS_CLIENT_69";
       provide: IOREDIS_CLIENT,
       useFactory: () => {
         return new Redis({
-          host: process.env.REDIS_HOST,
-          port: Number(process.env.REDIS_PORT)
+          host: process.env.REDIS_HOST || "localhost",
+          port: Number(process.env.REDIS_PORT) || 6379
         });
       }
     }
