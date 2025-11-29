@@ -35,8 +35,6 @@ const buildOauthTransport = async () => {
     }
   );
 
-  console.log("\n\n\n" + accessToken + "\n\n\n");
-
   return nodemailer.createTransport({
     service: "gmail",
     auth: {
