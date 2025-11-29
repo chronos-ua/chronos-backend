@@ -17,12 +17,25 @@ const buildOauthTransport = async () => {
   const oauth2Client = new OAuth2(
     clientId,
     clientSecret,
-    process.env.SMTP_REDIRECT_URI ??
-      "https://developers.google.com/oauthplayground"
+    "https://developers.google.com/oauthplayground"
   );
   oauth2Client.setCredentials({ refresh_token: refreshToken });
 
-  const { token: accessToken } = await oauth2Client.getAccessToken();
+  // const { token: accessToken } = await oauth2Client.getAccessToken();
+
+  const accessToken = await new Promise<string | undefined | null>(
+    (resolve, reject) => {
+      oauth2Client.getAccessToken((err, token) => {
+        if (err) {
+          console.error(err);
+          reject("Failed to create access token :(");
+        }
+        resolve(token);
+      });
+    }
+  );
+
+  console.log("\n\n\n" + accessToken + "\n\n\n");
 
   return nodemailer.createTransport({
     service: "gmail",
