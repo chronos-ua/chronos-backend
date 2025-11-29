@@ -74,8 +74,11 @@ const buildSmtpTransport = async () => {
 const emailTransporterProvider = {
   provide: EMAIL_TRANSPORTER,
   useFactory: async () => {
-    const transporter =
-      (await buildOauthTransport()) ?? (await buildSmtpTransport());
+    const transporter = await buildOauthTransport();
+
+    if (!transporter) {
+      throw new Error("Email transporter is not configured");
+    }
 
     try {
       await transporter.verify();
