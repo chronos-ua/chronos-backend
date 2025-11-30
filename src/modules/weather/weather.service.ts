@@ -23,13 +23,13 @@ export class WeatherService {
     return Math.min(this.TTL_SECONDS, secondsUntilMidnight);
   }
 
-  async getWeather(city: string) {
+  async getWeather(query: string) {
     return await getOrSet(
       this.redis,
       // weather:v1:<day of week>:<city>
-      `${this.GLOBAL_CACHE_PREFIX}${new Date().getDay()}:${city.toLowerCase()}`,
+      `${this.GLOBAL_CACHE_PREFIX}${new Date().getDay()}:${query.toLowerCase()}`,
       this.getTTL(),
-      () => this.fetchFromProvider(city)
+      () => this.fetchFromProvider(query)
     );
   }
 
