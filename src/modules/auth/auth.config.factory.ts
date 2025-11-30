@@ -24,13 +24,13 @@ export function createAuth(db: any, redis: Redis, emailService: EmailService) {
       sendResetPassword: async ({ user, url, token }, request) => {
         if (user?.email && token) {
           await emailService.sendPasswordResetEmail(user.email, url, token);
-        }
-      },
-      onPasswordReset: async ({ user }, request) => {
-        if (process.env.NODE_ENV !== "production") {
-          logger.log(`Password reset for user ${user?.email}`);
+          if (process.env.NODE_ENV !== "production") {
+            logger.log(`Sent password reset email to ${user.email} ${url}`);
+          }
         } else {
-          throw new Error("onPasswordReset not implemented");
+          logger.warn(
+            "Cannot send password reset email: missing user email or token"
+          );
         }
       }
     },
