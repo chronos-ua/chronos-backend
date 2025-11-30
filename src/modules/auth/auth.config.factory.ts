@@ -3,6 +3,7 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import Redis from "ioredis";
 import { EmailService } from "../../common/services/email.service";
 import { Logger } from "@nestjs/common";
+import { openAPI } from "better-auth/plugins";
 
 export function createAuth(db: any, redis: Redis, emailService: EmailService) {
   const logger = new Logger("Auth");
@@ -81,6 +82,7 @@ export function createAuth(db: any, redis: Redis, emailService: EmailService) {
     advanced: {
       // TODO: why is this needed? investigate and fix
       disableCSRFCheck: true
-    }
+    },
+    plugins: [openAPI()]
   });
 }
