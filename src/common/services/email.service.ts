@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 import nodemailer from "nodemailer";
 import { EMAIL_TEMPLATES } from "../consts/emailTemplates.js";
 import { InternalServerError } from "../consts/errors.js";
@@ -8,6 +8,7 @@ export const EMAIL_TRANSPORTER = Symbol("EMAIL_TRANSPORTER");
 @Injectable()
 class EmailService {
   private readonly sender: string;
+  private readonly logger = new Logger(EmailService.name);
 
   constructor(
     @Inject(EMAIL_TRANSPORTER)
@@ -37,6 +38,7 @@ class EmailService {
     try {
       await this.transporter.sendMail(mailOptions);
     } catch (error) {
+      this.logger.error(error);
       throw new InternalServerError("Failed to send password reset email");
     }
   }
@@ -59,7 +61,7 @@ class EmailService {
     try {
       await this.transporter.sendMail(mailOptions);
     } catch (error) {
-      console.error(error);
+      this.logger.error(error);
       throw new InternalServerError("Failed to send email verification");
     }
   }
@@ -75,7 +77,7 @@ class EmailService {
     try {
       await this.transporter.sendMail(mailOptions);
     } catch (error) {
-      console.error(error);
+      this.logger.error(error);
       throw new InternalServerError("Failed to send pwned password alert");
     }
   }
