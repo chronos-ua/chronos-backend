@@ -1,12 +1,13 @@
 import { IOREDIS_CLIENT } from "./../../common/redis/redis.module";
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 import Redis from "ioredis";
 import { getOrSet } from "src/common/utils/cache.util";
 
 @Injectable()
 export class WeatherService {
   private readonly GLOBAL_CACHE_PREFIX = "weather:v1:";
-  private readonly TTL_SECONDS = 1800; // 30m
+  private readonly TTL_SECONDS = 3 * 60 * 60; // 3h
+  private readonly logger = new Logger(WeatherService.name);
 
   constructor(@Inject(IOREDIS_CLIENT) private readonly redis: Redis) {}
 
@@ -27,3 +28,4 @@ export class WeatherService {
     return { city, temp: 20, condition: "cloudy", timestamp: Date.now() };
   }
 }
+return { query, data: await data.json() };
