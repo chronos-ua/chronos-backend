@@ -1,7 +1,9 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param, Req } from "@nestjs/common";
 import { WeatherService } from "./weather.service";
-import { AllowAnonymous } from "@thallesp/nestjs-better-auth";
+import { AllowAnonymous, Session } from "@thallesp/nestjs-better-auth";
 import { DevOnly } from "src/common/decorators/devOnly.decorator";
+import { type Request } from "express";
+import type { IUserSession } from "../auth/auth.interfaces";
 
 // TODO: geocoding
 // https://developers.google.com/maps/documentation/geocoding/overview
@@ -13,5 +15,16 @@ export class WeatherController {
   @DevOnly(AllowAnonymous())
   getWeather(@Param("city") city: string) {
     return this.weatherService.getWeather(city);
+  }
+
+  @Get()
+  @DevOnly(AllowAnonymous())
+  getWeatherRoot(@Req() req: Request, @Session() session: IUserSession | null) {
+    const city = session?.user?.city;
+    let ip = req.ip;
+    if (["127.0.0.1", "::1", "localhost"].includes(ip!)) {
+      ip = undefined;
+    }
+    return this.weatherService.getWeather(city ?? ip ?? "Kyiv");
   }
 }
