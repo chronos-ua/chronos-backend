@@ -1,25 +1,26 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { UwsSocketIoAdapter } from "./common/adapters/socket.adapter";
-import {
-  ExpressAdapter,
-  NestExpressApplication
-} from "@nestjs/platform-express";
-import express from "ultimate-express";
+import { ExpressAdapter } from "@nestjs/platform-express";
 import { NestApplicationOptions } from "@nestjs/common";
+import express from "express";
 
 async function bootstrap() {
   const NestOptions: NestApplicationOptions = {};
 
-  NestOptions["bodyParser"] = false;
   if (process.env.NODE_ENV !== "production") {
     NestOptions["logger"] = ["error", "warn", "log", "debug", "verbose"];
   }
 
-  const app = await NestFactory.create<NestExpressApplication>(
+  NestOptions["bodyParser"] = false;
+
+  // const expressApp = express();
+  // const adapter = new ExpressAdapter(expressApp) as AbstractHttpAdapter;
+
+  const app = await NestFactory.create(
     AppModule,
-    new ExpressAdapter(express()),
-    { bodyParser: false }
+    // adapter,
+    NestOptions
   );
 
   const origins = process.env.CORS_ORIGINS
