@@ -14,8 +14,8 @@ export function createAuth(db: any, redis: Redis, emailService: EmailService) {
     secondaryStorage: {
       get: async (key) => await redis.get(key),
       set: async (key, value, ttl) => {
-        if (ttl) await redis.set(key, JSON.stringify(value), "EX", ttl);
-        else await redis.set(key, JSON.stringify(value));
+        if (ttl) await redis.set(key, value, "EX", ttl);
+        else await redis.set(key, value);
       },
       delete: async (key) => void (await redis.del(key))
     },
