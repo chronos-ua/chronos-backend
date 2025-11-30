@@ -11,12 +11,24 @@ export class WeatherService {
 
   constructor(@Inject(IOREDIS_CLIENT) private readonly redis: Redis) {}
 
+  private getTTL(): number {
+    // TTL_SECONDS but don't exceed midnight
+    const now = new Date();
+    const midnight = new Date();
+    midnight.setHours(24, 0, 0, 0);
+    const secondsUntilMidnight = Math.floor(
+      (midnight.getTime() - now.getTime()) / 1000
+    );
+
+    return Math.min(this.TTL_SECONDS, secondsUntilMidnight);
+  }
+
   async getWeather(city: string) {
     return await getOrSet(
       this.redis,
       // weather:v1:<day of week>:<city>
       `${this.GLOBAL_CACHE_PREFIX}${new Date().getDay()}:${city.toLowerCase()}`,
-      this.TTL_SECONDS,
+      this.getTTL(),
       () => this.fetchFromProvider(city)
     );
   }
