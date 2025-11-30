@@ -47,6 +47,11 @@ export function createAuth(db: any, redis: Redis, emailService: EmailService) {
             "Cannot send verification email: missing user email or token"
           );
         }
+      },
+      afterEmailVerification: async (user) => {
+        if (process.env.NODE_ENV !== "production") {
+          logger.log(`User ${user.id} has verified their email ${user.email}`);
+        }
       }
     },
     session: {
