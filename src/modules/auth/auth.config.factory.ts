@@ -32,6 +32,7 @@ export function createAuth(db: any, redis: Redis, emailService: EmailService) {
       }
     },
     emailVerification: {
+      sendOnSignUp: true,
       sendVerificationEmail: async ({ user, url, token }) => {
         if (user?.email && token) {
           await emailService.sendEmailVerification(user.email, url, token);
