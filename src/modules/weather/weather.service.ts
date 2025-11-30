@@ -21,11 +21,15 @@ export class WeatherService {
     );
   }
 
-  private async fetchFromProvider(city: string) {
-    console.warn(
-      "[WeatherService] fetchFromProvider is not implemented, returning mock data"
+  private async fetchFromProvider(query: string) {
+    if (!process.env.WEATHER_API_KEY) {
+      this.logger.warn("WEATHER_API_KEY is not set");
+      return { query, data: null };
+    }
+
+    const data = await fetch(
+      `https://api.weatherapi.com/v1/forecast.json?q=${query}&days=3&aqi=no&key=${process.env.WEATHER_API_KEY}`
     );
-    return { city, temp: 20, condition: "cloudy", timestamp: Date.now() };
+    return { query, data: await data.json() };
   }
 }
-return { query, data: await data.json() };
