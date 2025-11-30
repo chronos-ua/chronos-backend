@@ -20,6 +20,16 @@ export function createAuth(db: any, redis: Redis, emailService: EmailService) {
       },
       delete: async (key) => void (await redis.del(key))
     },
+    user: {
+      additionalFields: {
+        city: {
+          type: "string",
+          required: false,
+          description: "User's city for weather forecasts",
+          input: true
+        }
+      }
+    },
     emailAndPassword: {
       enabled: true,
       sendResetPassword: async ({ user, url, token }, request) => {
