@@ -2,8 +2,11 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import Redis from "ioredis";
 import { EmailService } from "../../common/services/email.service";
+import { Logger } from "@nestjs/common";
 
 export function createAuth(db: any, redis: Redis, emailService: EmailService) {
+  const logger = new Logger("Auth");
+
   return betterAuth({
     baseURL: process.env.BASE_URL || "http://localhost:3000",
     database: mongodbAdapter(db),
@@ -25,7 +28,7 @@ export function createAuth(db: any, redis: Redis, emailService: EmailService) {
       },
       onPasswordReset: async ({ user }, request) => {
         if (process.env.NODE_ENV !== "production") {
-          console.log(`Password reset for user ${user?.email}`);
+          logger.log(`Password reset for user ${user?.email}`);
         } else {
           throw new Error("onPasswordReset not implemented");
         }
@@ -36,6 +39,13 @@ export function createAuth(db: any, redis: Redis, emailService: EmailService) {
       sendVerificationEmail: async ({ user, url, token }) => {
         if (user?.email && token) {
           await emailService.sendEmailVerification(user.email, url, token);
+          if (process.env.NODE_ENV !== "production") {
+            logger.log(`Sent verification email to ${user.email} ${url}`);
+          }
+        } else {
+          logger.warn(
+            "Cannot send verification email: missing user email or token"
+          );
         }
       }
     },
