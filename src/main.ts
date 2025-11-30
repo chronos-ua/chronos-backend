@@ -2,13 +2,16 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { UwsSocketIoAdapter } from "./common/adapters/socket.adapter";
 import { ExpressAdapter } from "@nestjs/platform-express";
-import { NestApplicationOptions } from "@nestjs/common";
+import { Logger, NestApplicationOptions } from "@nestjs/common";
 import express from "express";
 
 async function bootstrap() {
+  const logger = new Logger("Bootstrap");
+
   const NestOptions: NestApplicationOptions = {};
 
   if (process.env.NODE_ENV !== "production") {
+    logger.log("Running in development mode");
     NestOptions["logger"] = ["error", "warn", "log", "debug", "verbose"];
   }
 
@@ -31,6 +34,8 @@ async function bootstrap() {
     origins.push(process.env.BASE_URL);
   }
 
+  logger.log(`CORS origins: ${origins.join(", ")}`);
+
   app.enableCors({
     origin: origins,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -42,7 +47,7 @@ async function bootstrap() {
   const port = process.env.HTTP_PORT || 3000;
 
   await app.listen(port, "0.0.0.0", () => {
-    console.log(`Listening on port ${port}`);
+    logger.log(`Listening on port ${port}`);
   });
 }
 
