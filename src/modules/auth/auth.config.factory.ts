@@ -61,6 +61,10 @@ export function createAuth(db: any, redis: Redis, emailService: EmailService) {
       accountLinking: {
         enabled: true
       }
+    },
+    advanced: {
+      // TODO: why is this needed? investigate and fix
+      disableCSRFCheck: true
     }
   });
 }
