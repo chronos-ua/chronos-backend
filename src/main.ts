@@ -25,7 +25,7 @@ async function bootstrap() {
 
   const origins = process.env.CORS_ORIGINS
     ? process.env.CORS_ORIGINS.split(",")
-    : ["*"];
+    : ["http://localhost:3000", "http://127.0.0.1:3000"];
 
   if (process.env.BASE_URL && !origins.includes(process.env.BASE_URL)) {
     origins.push(process.env.BASE_URL);
