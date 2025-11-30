@@ -53,6 +53,7 @@ export function createAuth(db: any, redis: Redis, emailService: EmailService) {
         if (process.env.NODE_ENV !== "production") {
           logger.log(`User ${user.id} has verified their email ${user.email}`);
         }
+        // TODO: create default user calendar, etc.
       }
     },
     session: {
