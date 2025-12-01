@@ -18,6 +18,10 @@ export class UsersService {
     return await this.userModel.findById(id).lean().exec();
   }
 
+  async findOneByEmail(email: string) {
+    return await this.userModel.findOne({ email }).lean().exec();
+  }
+
   remove(id: number) {
     return `This action removes a #${id} user`;
   }

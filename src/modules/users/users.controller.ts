@@ -10,9 +10,10 @@ import { plainToInstance } from "class-transformer";
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    // return this.usersService.findOne(+id);
+
+  @Get(":email")
+  findByEmail(@Param("email") email: string) {
+    return this.usersService.findOneByEmail(email);
   }
 
   @Get("/settings")
