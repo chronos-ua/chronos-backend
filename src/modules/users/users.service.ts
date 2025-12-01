@@ -46,4 +46,19 @@ export class UsersService {
       { new: true }
     );
   }
+
+  async updateSetting(
+    setting: keyof IUserSettings,
+    value: unknown,
+    userId: string
+  ) {
+    return await this.userModel
+      .findByIdAndUpdate(
+        userId,
+        { $set: { [`settings.${setting}`]: value } },
+        { new: true }
+      )
+      .lean()
+      .exec();
+  }
 }
