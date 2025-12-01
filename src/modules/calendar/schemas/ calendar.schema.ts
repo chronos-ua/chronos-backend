@@ -14,6 +14,10 @@ export class Calendar {
   @Prop({ required: true })
   title: string;
 
+  // TODO: premium feature?
+  @Prop()
+  customId?: string;
+
   // TODO:
   // Ceate default calendar on user registration
   // Restrict deletion of default calendar
