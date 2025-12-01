@@ -8,7 +8,7 @@ export enum CalendarRole {
 }
 
 @Schema({ timestamps: true })
-export class Calendar extends Document {
+export class Calendar {
   @Prop({ required: true })
   title: string;
 
