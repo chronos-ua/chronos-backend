@@ -1,5 +1,12 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
+import { BooleanKeys } from "src/common/utils/booleanKeys.util";
+
+export type IUserSettings = typeof User.prototype.preferences;
+export type IUserSettingsBoolean = Pick<
+  IUserSettings,
+  BooleanKeys<IUserSettings>
+>;
 
 @Schema({ timestamps: true })
 export class User extends Document {
