@@ -1,11 +1,13 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document, Types } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
 
 export enum CalendarRole {
   OWNER = "owner",
   EDITOR = "editor",
   READER = "reader"
 }
+
+export type CalendarDocument = HydratedDocument<Calendar>;
 
 @Schema({ timestamps: true })
 export class Calendar {
