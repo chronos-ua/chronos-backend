@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types } from "mongoose";
 
-export enum CalendarRole {
+export enum ICalendarRole {
   OWNER = "owner",
   EDITOR = "editor",
   READER = "reader"
 }
 
-export type CalendarDocument = HydratedDocument<Calendar>;
+export type ICalendarDocument = HydratedDocument<Calendar>;
 
 @Schema({ timestamps: true })
 export class Calendar {
@@ -29,7 +29,7 @@ export class Calendar {
   @Prop([
     {
       userId: { type: Types.ObjectId, ref: "User" },
-      role: { type: String, enum: CalendarRole },
+      role: { type: String, enum: ICalendarRole },
       status: {
         type: String,
         enum: ["pending", "accepted"],
@@ -40,7 +40,7 @@ export class Calendar {
   ])
   members: Array<{
     userId?: Types.ObjectId;
-    role: CalendarRole;
+    role: ICalendarRole;
     status: string;
     email?: string;
   }>;
