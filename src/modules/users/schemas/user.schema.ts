@@ -8,6 +8,11 @@ export type IUserSettingsBoolean = Pick<
   BooleanKeys<IUserSettings>
 >;
 
+export const USER_SETTINGS_BOOLEAN_KEYS = Object.freeze([
+  "emailNotifications",
+  "telegramNotifications"
+] satisfies (keyof IUserSettingsBoolean)[]);
+
 @Schema({ timestamps: true })
 export class User extends Document {
   // Better Auth fields
