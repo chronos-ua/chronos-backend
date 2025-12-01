@@ -27,9 +27,6 @@ export class User extends Document {
 
   // --- Custom fields ---
 
-  @Prop()
-  city?: string;
-
   @Prop({
     type: Object,
     default: {
@@ -41,6 +38,7 @@ export class User extends Document {
     }
   })
   preferences: {
+    city: string;
     region: string;
     startOfWeek: "monday" | "sunday";
     timeFormat: "12h" | "24h";
