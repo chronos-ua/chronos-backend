@@ -2,7 +2,7 @@ import { Controller, Get, Patch, Param } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { Session } from "@thallesp/nestjs-better-auth";
 import type { IUserSession } from "../auth/auth.interfaces";
-import { IUserSettingsBoolean } from "./schemas/user.schema";
+import { IUserSettings, IUserSettingsBoolean } from "./schemas/user.schema";
 import { ToggleSettingUserDto } from "./dto/toggle-setting-user.dto";
 import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
@@ -34,11 +34,13 @@ export class UsersController {
     return this.usersService.toggleSetting(setting, session.user.id);
   }
 
-  @Patch("/settings/set/:setting")
+  @Patch("/settings/set/:setting/:value")
   updateSetting(
-    @Param("setting") setting: string,
+    @Param("setting") setting: keyof IUserSettings,
+    @Param("value") value: string,
     @Session() session: IUserSession
   ) {
-    // return this.usersService.updateSetting(setting, session.user.id);
+    // TODO: dto validation
+    return this.usersService.updateSetting(setting, value, session.user.id);
   }
 }
