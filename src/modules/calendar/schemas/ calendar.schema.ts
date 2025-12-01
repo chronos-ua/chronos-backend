@@ -33,6 +33,12 @@ export class Calendar {
   @Prop({ required: true, index: true })
   ownerId: Types.ObjectId;
 
+  @Prop()
+  holidaysCountryCode?: string;
+
+  @Prop()
+  isHolidaysEnabled?: boolean;
+
   @Prop([
     {
       userId: { type: Types.ObjectId, ref: "User" },
