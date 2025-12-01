@@ -52,6 +52,9 @@ export class Event {
   @Prop()
   url?: string;
 
+  @Prop()
+  imageUrl?: string;
+
   @Prop([
     {
       method: { type: String, enum: ["email", "push", "telegram"] },
