@@ -17,7 +17,7 @@ export class UsersController {
 
   @Get("/settings")
   getSettings(@Session() session: IUserSession) {
-    // return this.usersService.getSettings(session.user.id);
+    return this.usersService.getSettings(session.user.id);
   }
 
   @Patch("/settings/toggle/:setting")
