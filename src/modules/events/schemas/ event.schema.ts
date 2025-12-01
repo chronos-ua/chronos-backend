@@ -21,6 +21,9 @@ export class Event {
   @Prop({ required: true })
   title: string;
 
+  @Prop()
+  description?: string;
+
   @Prop({ type: String, enum: EventType, default: EventType.ARRANGEMENT })
   type: EventType;
 
