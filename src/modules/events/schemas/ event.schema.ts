@@ -4,7 +4,8 @@ import { HydratedDocument, Types } from "mongoose";
 export enum EventType {
   ARRANGEMENT = "arrangement",
   TASK = "task",
-  REMINDER = "reminder"
+  REMINDER = "reminder",
+  EVENT = "event"
 }
 
 export type IEventDocument = HydratedDocument<Event>;
