@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import { HydratedDocument } from "mongoose";
 import { BooleanKeys } from "src/common/utils/booleanKeys.util";
 
 export type IUserSettings = typeof User.prototype.preferences;
@@ -14,7 +14,7 @@ export const USER_SETTINGS_BOOLEAN_KEYS = Object.freeze([
 ] satisfies (keyof IUserSettingsBoolean)[]);
 
 @Schema({ timestamps: true })
-export class User extends Document {
+export class User {
   // Better Auth fields
   // https://www.better-auth.com/docs/concepts/database#user
 
