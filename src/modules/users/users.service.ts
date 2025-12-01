@@ -16,8 +16,8 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    return await this.userModel.findById(id).lean().exec();
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
@@ -26,6 +26,14 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async getSettings(userId: string) {
+    return await this.userModel
+      .findById(userId)
+      .select("preferences -_id")
+      .lean()
+      .exec();
   }
 
   async toggleSetting(
