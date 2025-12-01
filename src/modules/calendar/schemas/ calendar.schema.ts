@@ -14,6 +14,9 @@ export class Calendar {
   @Prop({ required: true })
   title: string;
 
+  // TODO:
+  // Ceate default calendar on user registration
+  // Restrict deletion of default calendar
   @Prop()
   /** Marks the main calendar of the user */
   isDefault?: boolean;
