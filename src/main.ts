@@ -2,7 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { UwsSocketIoAdapter } from "./common/adapters/socket.adapter";
 import { ExpressAdapter } from "@nestjs/platform-express";
-import { Logger, NestApplicationOptions } from "@nestjs/common";
+import { Logger, NestApplicationOptions, ValidationPipe } from "@nestjs/common";
 import express from "express";
 
 async function bootstrap() {
@@ -27,6 +27,8 @@ async function bootstrap() {
   );
 
   app.setGlobalPrefix("api");
+
+  app.useGlobalPipes(new ValidationPipe({}));
 
   const origins = process.env.CORS_ORIGINS
     ? process.env.CORS_ORIGINS.split(",")
