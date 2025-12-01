@@ -1,42 +1,44 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete
-} from "@nestjs/common";
+import { Controller, Get, Patch, Param } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
+import { Session } from "@thallesp/nestjs-better-auth";
+import type { IUserSession } from "../auth/auth.interfaces";
+import { IUserSettingsBoolean } from "./schemas/user.schema";
+import { ToggleSettingUserDto } from "./dto/toggle-setting-user.dto";
+import { validate } from "class-validator";
+import { plainToInstance } from "class-transformer";
 
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.usersService.findOne(+id);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Get("/settings")
+  getSettings(@Session() session: IUserSession) {
+    // return this.usersService.getSettings(session.user.id);
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.usersService.remove(+id);
+  @Patch("/settings/toggle/:setting")
+  async toggleSetting(
+    @Param("setting") setting: keyof IUserSettingsBoolean,
+    @Session() session: IUserSession
+  ) {
+    const dto = plainToInstance(ToggleSettingUserDto, { setting });
+    const errors = await validate(dto);
+    if (errors.length > 0) {
+      throw errors;
+    }
+
+    return this.usersService.toggleSetting(setting, session.user.id);
+  }
+
+  @Patch("/settings/set/:setting")
+  updateSetting(
+    @Param("setting") setting: string,
+    @Session() session: IUserSession
+  ) {
+    // return this.usersService.updateSetting(setting, session.user.id);
   }
 }
