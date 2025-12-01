@@ -15,6 +15,10 @@ export class Calendar {
   title: string;
 
   @Prop()
+  /** Marks the main calendar of the user */
+  isDefault?: boolean;
+
+  @Prop()
   description?: string;
 
   @Prop({ default: "#4F46E5" })
