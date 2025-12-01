@@ -31,6 +31,10 @@ export class Event {
   @Prop({ default: false })
   isAllDay: boolean;
 
+  // TODO: weather notification
+  @Prop()
+  isOutdoor?: boolean;
+
   // Task specific
   @Prop({ default: false })
   isCompleted?: boolean;
