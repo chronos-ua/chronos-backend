@@ -37,10 +37,21 @@ export class UsersController {
   @Patch("/settings/set/:setting/:value")
   updateSetting(
     @Param("setting") setting: keyof IUserSettings,
-    @Param("value") value: string,
+    @Param("value") rawValue: string,
     @Session() session: IUserSession
   ) {
     // TODO: dto validation
+    let value;
+    switch (rawValue) {
+      case "true":
+        value = true;
+        break;
+      case "false":
+        value = false;
+        break;
+      default:
+        break;
+    }
     return this.usersService.updateSetting(setting, value, session.user.id);
   }
 }
