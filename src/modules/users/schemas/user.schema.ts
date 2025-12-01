@@ -7,6 +7,7 @@ export type IUserSettingsBoolean = Pick<
   IUserSettings,
   BooleanKeys<IUserSettings>
 >;
+export type UserDocument = HydratedDocument<User>;
 
 export const USER_SETTINGS_BOOLEAN_KEYS = Object.freeze([
   "emailNotifications",
