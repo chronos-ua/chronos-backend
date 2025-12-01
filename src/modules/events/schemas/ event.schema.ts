@@ -40,8 +40,10 @@ export class Event {
   isCompleted?: boolean;
 
   @Prop()
-  /** Phisical location or URL */
-  location?: string;
+  address?: string;
+
+  @Prop()
+  url?: string;
 
   @Prop([
     {
