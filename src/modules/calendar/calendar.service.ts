@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { CreateCalendarDto } from "./dto/create-calendar.dto";
 import { UpdateCalendarDto } from "./dto/update-calendar.dto";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { Calendar } from "./schemas/ calendar.schema";
 
 @Injectable()
@@ -30,11 +30,40 @@ export class CalendarService {
     return await this.calendarModel.findById(id).lean().exec();
   }
 
-  update(id: number, updateCalendarDto: UpdateCalendarDto) {
-    return `This action updates a #${id} calendar`;
+  async update(
+    ownerId: string,
+    calendarId: string,
+    updateCalendarDto: UpdateCalendarDto
+  ) {
+    const calendar = await this.calendarModel
+      .findOne({
+        _id: new Types.ObjectId(calendarId),
+        owner: new Types.ObjectId(ownerId)
+      })
+      .exec();
+    if (!calendar) {
+      throw new Error("Calendar not found or you are not the owner");
+    }
+    Object.assign(calendar, updateCalendarDto);
+    return await calendar.save();
   }
 
-  remove(id: number) {
+  async remove(id: string) {
     return `This action removes a #${id} calendar`;
+  }
+
+  async transferOwnership(
+    calendarId: string,
+    newOwnerId: string,
+    currentOwnerId: string
+  ) {
+    const calendar = await this.calendarModel
+      .findOne({ _id: calendarId, owner: currentOwnerId })
+      .exec();
+    if (!calendar) {
+      throw new Error("Calendar not found or you are not the owner");
+    }
+    calendar.owner = new Types.ObjectId(newOwnerId);
+    await calendar.save();
   }
 }

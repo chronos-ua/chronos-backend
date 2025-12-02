@@ -36,13 +36,27 @@ export class CalendarController {
   @Patch(":id")
   update(
     @Param("id") id: string,
-    @Body() updateCalendarDto: UpdateCalendarDto
+    @Body() updateCalendarDto: UpdateCalendarDto,
+    @Session() session: IUserSession
   ) {
-    return this.calendarService.update(+id, updateCalendarDto);
+    return this.calendarService.update(session.user.id, id, updateCalendarDto);
   }
 
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.calendarService.remove(+id);
+  }
+
+  @Post("transfer-ownership/:calendarId/:newOwnerId")
+  async transferOwnership(
+    @Param("calendarId") calendarId: string,
+    @Param("newOwnerId") newOwnerId: string,
+    @Session() session: IUserSession
+  ) {
+    return await this.calendarService.transferOwnership(
+      calendarId,
+      newOwnerId,
+      session.user.id
+    );
   }
 }
