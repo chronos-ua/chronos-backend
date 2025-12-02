@@ -7,7 +7,7 @@ import { openAPI } from "better-auth/plugins";
 import { CalendarService } from "../calendar/calendar.service";
 
 export function createAuth(
-  db: any,
+  db: Parameters<typeof mongodbAdapter>[0],
   redis: Redis,
   emailService: EmailService,
   calendarService: CalendarService
