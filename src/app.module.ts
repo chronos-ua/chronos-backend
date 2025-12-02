@@ -13,6 +13,7 @@ import Redis from "ioredis";
 import { EmailModule } from "./common/services/email.module";
 import { EmailService } from "./common/services/email.service";
 import { RequestsLogMiddleware } from "./common/middlewares/requests-log.middleware";
+import { EventModule } from "./modules/events/event.module";
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { RequestsLogMiddleware } from "./common/middlewares/requests-log.middlew
     RedisModule,
     EmailModule,
     CalendarModule,
-    UsersModule
+    UsersModule,
+    EventModule
   ],
   controllers: [AppController],
   providers: [AppService]

@@ -14,6 +14,15 @@ export class CalendarService {
     return "This action adds a new calendar";
   }
 
+  async createDefault(userId: string) {
+    await this.calendarModel.create({
+      owner: userId,
+      title: "Main",
+      isDefault: true,
+      events: []
+    });
+  }
+
   findAll() {
     return `This action returns all calendar`;
   }
