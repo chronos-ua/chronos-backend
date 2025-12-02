@@ -9,7 +9,7 @@ export enum ICalendarRole {
 
 export type ICalendarDocument = HydratedDocument<Calendar>;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: "calendar" })
 export class Calendar {
   @Prop({ required: true })
   title: string;

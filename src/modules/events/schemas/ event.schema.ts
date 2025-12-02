@@ -10,7 +10,7 @@ export enum EventType {
 
 export type IEventDocument = HydratedDocument<Event>;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: "event" })
 export class Event {
   @Prop({ required: true, type: Types.ObjectId, ref: "Calendar", index: true })
   calendarId: Types.ObjectId;
