@@ -51,7 +51,7 @@ export class Event {
   address?: string;
 
   @Prop()
-  url?: string;
+  externalUrl?: string;
 
   @Prop()
   imageUrl?: string;
