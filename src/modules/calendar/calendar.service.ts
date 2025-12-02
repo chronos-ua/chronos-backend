@@ -12,22 +12,24 @@ export class CalendarService {
   ) {}
   async create(ownerId: string, createCalendarDto: CreateCalendarDto) {
     return await this.calendarModel.create({
-      owner: ownerId,
+      owner: new Types.ObjectId(ownerId),
       ...createCalendarDto
     });
   }
 
   async createDefault(userId: string) {
     await this.calendarModel.create({
-      owner: userId,
+      owner: new Types.ObjectId(userId),
       title: "Main",
-      isDefault: true,
-      events: []
+      isDefault: true
     });
   }
 
   async findOne(id: string) {
-    return await this.calendarModel.findById(id).lean().exec();
+    return await this.calendarModel
+      .findById(new Types.ObjectId(id))
+      .lean()
+      .exec();
   }
 
   async update(
@@ -58,7 +60,10 @@ export class CalendarService {
     currentOwnerId: string
   ) {
     const calendar = await this.calendarModel
-      .findOne({ _id: calendarId, owner: currentOwnerId })
+      .findOne({
+        _id: new Types.ObjectId(calendarId),
+        owner: new Types.ObjectId(currentOwnerId)
+      })
       .exec();
     if (!calendar) {
       throw new Error("Calendar not found or you are not the owner");

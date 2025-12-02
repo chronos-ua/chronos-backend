@@ -5,7 +5,7 @@ import {
   USER_SETTINGS_BOOLEAN_KEYS
 } from "./schemas/user.schema";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 
 @Injectable()
 export class UsersService {
@@ -15,7 +15,7 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    return await this.userModel.findById(id).lean().exec();
+    return await this.userModel.findById(new Types.ObjectId(id)).lean().exec();
   }
 
   async findOneByEmail(email: string) {
@@ -28,7 +28,7 @@ export class UsersService {
 
   async getSettings(userId: string) {
     return await this.userModel
-      .findById(userId)
+      .findById(new Types.ObjectId(userId))
       .select("preferences -_id")
       .lean()
       .exec();
@@ -39,7 +39,7 @@ export class UsersService {
     userId: string
   ) {
     return await this.userModel.findByIdAndUpdate(
-      userId,
+      new Types.ObjectId(userId),
       { $set: { [`settings.${setting}`]: { $not: `$settings.${setting}` } } },
       { new: true }
     );
@@ -52,7 +52,7 @@ export class UsersService {
   ) {
     return await this.userModel
       .findByIdAndUpdate(
-        userId,
+        new Types.ObjectId(userId),
         { $set: { [`settings.${setting}`]: value } },
         { new: true }
       )
