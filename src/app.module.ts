@@ -33,6 +33,10 @@ import { CalendarService } from "./modules/calendar/calendar.service";
         emailService: EmailService,
         calendarService: CalendarService
       ) => {
+        if (!connection.db) {
+          throw new Error("Database connection is not established");
+        }
+
         return {
           auth: createAuth(connection.db, redis, emailService, calendarService),
           disableBodyParser: true
