@@ -28,11 +28,6 @@ export class CalendarController {
     );
   }
 
-  @Get()
-  findAll() {
-    return this.calendarService.findAll();
-  }
-
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.calendarService.findOne(id);

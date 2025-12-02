@@ -26,10 +26,6 @@ export class CalendarService {
     });
   }
 
-  findAll() {
-    return `This action returns all calendar`;
-  }
-
   async findOne(id: string) {
     return await this.calendarModel.findById(id).lean().exec();
   }
