@@ -51,13 +51,20 @@ export class CalendarService {
   }
 
   async remove(calendarId: string, ownerId: string) {
-    const result = await this.calendarModel.deleteOne({
+    const calendar = await this.calendarModel.findOne({
       _id: new Types.ObjectId(calendarId),
       owner: new Types.ObjectId(ownerId)
     });
-    if (result.deletedCount === 0) {
+
+    if (!calendar) {
       throw new Error("Calendar not found or you are not the owner");
     }
+
+    if (calendar.isDefault) {
+      throw new Error("Cannot delete the main calendar");
+    }
+
+    await calendar.deleteOne();
   }
 
   async transferOwnership(
