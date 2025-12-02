@@ -1,3 +1,4 @@
+import type { IUserSession } from "./../auth/auth.interfaces.d";
 import {
   Controller,
   Get,
@@ -10,14 +11,18 @@ import {
 import { CalendarService } from "./calendar.service";
 import { CreateCalendarDto } from "./dto/create-calendar.dto";
 import { UpdateCalendarDto } from "./dto/update-calendar.dto";
+import { Session } from "@thallesp/nestjs-better-auth";
 
 @Controller("calendar")
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
   @Post()
-  create(@Body() createCalendarDto: CreateCalendarDto) {
-    return this.calendarService.create(createCalendarDto);
+  create(
+    @Session() session: IUserSession,
+    @Body() createCalendarDto: CreateCalendarDto
+  ) {
+    return this.calendarService.create(session.user.id, createCalendarDto);
   }
 
   @Get()
