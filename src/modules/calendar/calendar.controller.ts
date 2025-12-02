@@ -43,8 +43,8 @@ export class CalendarController {
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.calendarService.remove(+id);
+  remove(@Param("id") id: string, @Session() session: IUserSession) {
+    return this.calendarService.remove(id, session.user.id);
   }
 
   @Post("transfer-ownership/:calendarId/:newOwnerId")

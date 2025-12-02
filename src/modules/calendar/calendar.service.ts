@@ -50,8 +50,14 @@ export class CalendarService {
     return await calendar.save();
   }
 
-  async remove(id: string) {
-    return `This action removes a #${id} calendar`;
+  async remove(calendarId: string, ownerId: string) {
+    const result = await this.calendarModel.deleteOne({
+      _id: new Types.ObjectId(calendarId),
+      owner: new Types.ObjectId(ownerId)
+    });
+    if (result.deletedCount === 0) {
+      throw new Error("Calendar not found or you are not the owner");
+    }
   }
 
   async transferOwnership(
