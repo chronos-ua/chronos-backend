@@ -4,8 +4,14 @@ import Redis from "ioredis";
 import { EmailService } from "../../common/services/email.service";
 import { Logger } from "@nestjs/common";
 import { openAPI } from "better-auth/plugins";
+import { CalendarService } from "../calendar/calendar.service";
 
-export function createAuth(db: any, redis: Redis, emailService: EmailService) {
+export function createAuth(
+  db: any,
+  redis: Redis,
+  emailService: EmailService,
+  calendarService: CalendarService
+) {
   const logger = new Logger("Auth");
 
   return betterAuth({

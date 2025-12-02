@@ -14,20 +14,27 @@ import { EmailModule } from "./common/services/email.module";
 import { EmailService } from "./common/services/email.service";
 import { RequestsLogMiddleware } from "./common/middlewares/requests-log.middleware";
 import { EventModule } from "./modules/events/event.module";
+import { CalendarService } from "./modules/calendar/calendar.service";
 
 @Module({
   imports: [
     MongooseModule.forRoot("mongodb://localhost/nest", {}),
     AuthModule.forRootAsync({
-      imports: [MongooseModule, RedisModule, EmailModule],
-      inject: [getConnectionToken(), IOREDIS_CLIENT, EmailService],
+      imports: [MongooseModule, RedisModule, EmailModule, CalendarModule],
+      inject: [
+        getConnectionToken(),
+        IOREDIS_CLIENT,
+        EmailService,
+        CalendarService
+      ],
       useFactory: (
         connection: Connection,
         redis: Redis,
-        emailService: EmailService
+        emailService: EmailService,
+        calendarService: CalendarService
       ) => {
         return {
-          auth: createAuth(connection.db, redis, emailService),
+          auth: createAuth(connection.db, redis, emailService, calendarService),
           disableBodyParser: true
         };
       }

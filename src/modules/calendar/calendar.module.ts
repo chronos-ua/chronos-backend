@@ -9,6 +9,7 @@ import { CalendarSchema } from "./schemas/ calendar.schema";
     MongooseModule.forFeature([{ name: "Calendar", schema: CalendarSchema }])
   ],
   controllers: [CalendarController],
-  providers: [CalendarService]
+  providers: [CalendarService],
+  exports: [CalendarService]
 })
 export class CalendarModule {}
