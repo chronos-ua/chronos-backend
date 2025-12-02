@@ -64,3 +64,4 @@ export class Calendar {
 }
 
 export const CalendarSchema = SchemaFactory.createForClass(Calendar);
+CalendarSchema.set("strict", true);

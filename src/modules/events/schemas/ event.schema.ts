@@ -70,3 +70,4 @@ export class Event {
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
+EventSchema.set("strict", true);
