@@ -59,7 +59,25 @@ export function createAuth(
         if (process.env.NODE_ENV !== "production") {
           logger.log(`User ${user.id} has verified their email ${user.email}`);
         }
-        // TODO: create default user calendar, etc.
+      }
+    },
+    databaseHooks: {
+      user: {
+        create: {
+          after: async (user) => {
+            // Create default calendar for a new user
+            try {
+              await calendarService.createDefault(user.id);
+              if (process.env.NODE_ENV !== "production") {
+                logger.log(`Created default calendar for new user ${user.id}`);
+              }
+            } catch (error) {
+              logger.error(
+                `Failed to create default calendar for user ${user.id}: ${error}`
+              );
+            }
+          }
+        }
       }
     },
     session: {
