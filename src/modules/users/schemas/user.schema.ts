@@ -14,7 +14,7 @@ export const USER_SETTINGS_BOOLEAN_KEYS = Object.freeze([
   "telegramNotifications"
 ] satisfies (keyof IUserSettingsBoolean)[]);
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: "user" })
 export class User {
   // Better Auth fields
   // https://www.better-auth.com/docs/concepts/database#user
