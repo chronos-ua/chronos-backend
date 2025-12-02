@@ -45,7 +45,7 @@ export class Calendar {
 
   @Prop([
     {
-      userId: { type: Types.ObjectId, ref: "User" },
+      user: { type: Types.ObjectId, ref: "User" },
       role: { type: String, enum: ICalendarRole },
       status: {
         type: String,
@@ -56,7 +56,7 @@ export class Calendar {
     }
   ])
   members: Array<{
-    userId?: Types.ObjectId;
+    user?: Types.ObjectId;
     role: ICalendarRole;
     status: string;
     email?: string;
