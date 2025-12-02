@@ -30,8 +30,8 @@ export class CalendarService {
     return `This action returns all calendar`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} calendar`;
+  async findOne(id: string) {
+    return await this.calendarModel.findById(id).lean().exec();
   }
 
   update(id: number, updateCalendarDto: UpdateCalendarDto) {
