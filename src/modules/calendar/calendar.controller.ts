@@ -18,11 +18,14 @@ export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
   @Post()
-  create(
+  async create(
     @Session() session: IUserSession,
     @Body() createCalendarDto: CreateCalendarDto
   ) {
-    return this.calendarService.create(session.user.id, createCalendarDto);
+    return await this.calendarService.create(
+      session.user.id,
+      createCalendarDto
+    );
   }
 
   @Get()

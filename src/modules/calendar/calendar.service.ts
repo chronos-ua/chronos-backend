@@ -10,8 +10,8 @@ export class CalendarService {
   constructor(
     @InjectModel("Calendar") private calendarModel: Model<Calendar>
   ) {}
-  create(ownerId: string, createCalendarDto: CreateCalendarDto) {
-    return this.calendarModel.create({
+  async create(ownerId: string, createCalendarDto: CreateCalendarDto) {
+    return await this.calendarModel.create({
       owner: ownerId,
       ...createCalendarDto
     });
