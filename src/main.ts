@@ -4,6 +4,7 @@ import { UwsSocketIoAdapter } from "./common/adapters/socket.adapter";
 import { ExpressAdapter } from "@nestjs/platform-express";
 import { Logger, NestApplicationOptions, ValidationPipe } from "@nestjs/common";
 import express from "express";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 
 async function bootstrap() {
   const logger = new Logger("Bootstrap");
@@ -47,6 +48,16 @@ async function bootstrap() {
   });
 
   app.useWebSocketAdapter(new UwsSocketIoAdapter(app));
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle("Huh?")
+    .addCookieAuth("apiKeyCookie")
+    .setExternalDoc("AUTH reference", "/api/auth/reference")
+    .build();
+
+  const documentFactory = () =>
+    SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup("api", app, documentFactory);
 
   const port = process.env.HTTP_PORT || 3000;
 
