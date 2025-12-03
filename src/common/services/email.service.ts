@@ -35,12 +35,7 @@ class EmailService {
       html: EMAIL_TEMPLATES.resetPassword(url)
     };
 
-    try {
-      await this.transporter.sendMail(mailOptions);
-    } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerError("Failed to send password reset email");
-    }
+    await this.send(mailOptions, this.sendPasswordResetEmail.name);
   }
 
   public async sendEmailVerification(
@@ -58,12 +53,7 @@ class EmailService {
       )
     };
 
-    try {
-      await this.transporter.sendMail(mailOptions);
-    } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerError("Failed to send email verification");
-    }
+    await this.send(mailOptions, this.sendEmailVerification.name);
   }
 
   public async sendPwnedPasswordAlert(email: string, count: number) {
@@ -74,12 +64,7 @@ class EmailService {
       html: EMAIL_TEMPLATES.pwnedPasswordAlert(count)
     };
 
-    try {
-      await this.transporter.sendMail(mailOptions);
-    } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerError("Failed to send pwned password alert");
-    }
+    await this.send(mailOptions, this.sendPwnedPasswordAlert.name);
   }
 
   public async sendMagicLink(email: string, url: string, token: string) {
@@ -89,12 +74,17 @@ class EmailService {
       subject: "Magic Link Sign-In",
       html: EMAIL_TEMPLATES.magicLink(url)
     };
+    await this.send(mailOptions, this.sendMagicLink.name);
+  }
 
+  private async send(opt: nodemailer.SendMailOptions, caller: string) {
     try {
-      await this.transporter.sendMail(mailOptions);
+      await this.transporter.sendMail(opt);
     } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerError("Failed to send magic link email");
+      this.logger.error(
+        `Error in ${caller} while sending email to ${opt.to}: ${error}`
+      );
+      throw new InternalServerError(`Failed to send email`);
     }
   }
 
