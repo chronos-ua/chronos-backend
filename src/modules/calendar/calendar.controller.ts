@@ -29,8 +29,8 @@ export class CalendarController {
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.calendarService.findOne(id);
+  findOne(@Param("id") calendarId: string, @Session() session: IUserSession) {
+    return this.calendarService.findOne(calendarId, session.user.id);
   }
 
   @Patch(":id")

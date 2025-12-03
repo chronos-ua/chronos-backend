@@ -25,9 +25,12 @@ export class CalendarService {
     });
   }
 
-  async findOne(id: string) {
+  async findOne(calendarId: string, userId: string) {
     return await this.calendarModel
-      .findById(new Types.ObjectId(id))
+      .findOne({
+        _id: new Types.ObjectId(calendarId),
+        owner: new Types.ObjectId(userId)
+      })
       .lean()
       .exec();
   }
