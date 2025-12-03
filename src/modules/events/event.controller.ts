@@ -14,27 +14,27 @@ import { UpdateEventDto } from "./dto/update-event.dto";
 @Controller("events")
 export class EventController {
   constructor(private readonly eventService: EventService) {}
-  @Post()
+  // @Post()
   create(@Body() createEventDto: CreateEventDto) {
     return this.eventService.create(createEventDto);
   }
 
-  @Get()
+  // @Get()
   findAll() {
     return this.eventService.findAll();
   }
 
-  @Get(":id")
+  // @Get(":id")
   findOne(@Param("id") id: string) {
     return this.eventService.findOne(+id);
   }
 
-  @Patch(":id")
+  // @Patch(":id")
   update(@Param("id") id: string, @Body() updateEventDto: UpdateEventDto) {
     return this.eventService.update(+id, updateEventDto);
   }
 
-  @Delete(":id")
+  // @Delete(":id")
   remove(@Param("id") id: string) {
     return this.eventService.remove(+id);
   }
