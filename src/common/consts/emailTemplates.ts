@@ -30,6 +30,16 @@ const EMAIL_TEMPLATES = {
       <p><a href="https://haveibeenpwned.com/Passwords">https://haveibeenpwned.com/Passwords</a></p>
       <p>Please avoid pasting your current password into third‑party sites if you are unsure. Instead, change your password to a strong, unique one and enable multi-factor authentication.</p>
     `;
+  },
+  magicLink: (magicLink: string) => {
+    return `
+      <h1>Chronos</h1>
+      <br>
+      <p>Click the link below to sign in using your magic link:</p>
+      <a href="${magicLink}">${magicLink}</a>
+      <br>
+      <p>If you did not request this email, please ignore it.</p>
+    `;
   }
 };
 

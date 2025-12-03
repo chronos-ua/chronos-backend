@@ -82,6 +82,22 @@ class EmailService {
     }
   }
 
+  public async sendMagicLink(email: string, url: string, token: string) {
+    const mailOptions: nodemailer.SendMailOptions = {
+      from: this.sender,
+      to: email,
+      subject: "Magic Link Sign-In",
+      html: EMAIL_TEMPLATES.magicLink(url)
+    };
+
+    try {
+      await this.transporter.sendMail(mailOptions);
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerError("Failed to send magic link email");
+    }
+  }
+
   private getEmailResetLink(token: string) {
     return `https://uevent.pp.ua/auth/password-reset/${token}`;
   }

@@ -3,7 +3,7 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import Redis from "ioredis";
 import { EmailService } from "../../common/services/email.service";
 import { Logger } from "@nestjs/common";
-import { openAPI } from "better-auth/plugins";
+import { magicLink, openAPI } from "better-auth/plugins";
 import { CalendarService } from "../calendar/calendar.service";
 
 export function createAuth(
@@ -108,6 +108,16 @@ export function createAuth(
       // TODO: why is this needed? investigate and fix
       disableCSRFCheck: true
     },
-    plugins: [openAPI()]
+    plugins: [
+      openAPI(),
+      magicLink({
+        sendMagicLink: async ({ email, token, url }, ctx) => {
+          await emailService.sendMagicLink(email, url, token);
+          if (process.env.NODE_ENV !== "production") {
+            logger.log(`Sent magic link email to ${email} ${url}`);
+          }
+        }
+      })
+    ]
   });
 }
