@@ -5,6 +5,7 @@ import { ExpressAdapter } from "@nestjs/platform-express";
 import { Logger, NestApplicationOptions, ValidationPipe } from "@nestjs/common";
 import express from "express";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+import { SwaggerTheme, SwaggerThemeNameEnum } from "swagger-themes";
 
 async function bootstrap() {
   const logger = new Logger("Bootstrap");
@@ -57,7 +58,12 @@ async function bootstrap() {
 
   const documentFactory = () =>
     SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup("api", app, documentFactory);
+  SwaggerModule.setup("api", app, documentFactory, {
+    customCss: new SwaggerTheme().getBuffer(SwaggerThemeNameEnum.GRUVBOX),
+    swaggerOptions: {
+      persistAuthorization: true
+    }
+  });
 
   const port = process.env.HTTP_PORT || 3000;
 
