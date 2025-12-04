@@ -1,10 +1,15 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types } from "mongoose";
 
-export enum ICalendarRole {
+export enum ECalendarRole {
   OWNER = "owner",
   EDITOR = "editor",
   READER = "reader"
+}
+
+export enum ECalendarInviteStatus {
+  PENDING = "pending",
+  ACCEPTED = "accepted"
 }
 
 export type ICalendarDocument = HydratedDocument<Calendar>;
@@ -46,18 +51,18 @@ export class Calendar {
   @Prop([
     {
       user: { type: Types.ObjectId, ref: "User" },
-      role: { type: String, enum: ICalendarRole },
+      role: { type: String, enum: ECalendarRole },
       status: {
         type: String,
-        enum: ["pending", "accepted"],
-        default: "pending"
+        enum: ECalendarInviteStatus,
+        default: ECalendarInviteStatus.PENDING
       },
       email: String // For invitations to users not yet registered
     }
   ])
   members: Array<{
     user?: Types.ObjectId;
-    role: ICalendarRole;
+    role: ECalendarRole;
     status: string;
     email?: string;
   }>;
