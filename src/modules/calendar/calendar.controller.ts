@@ -73,4 +73,17 @@ export class CalendarController {
       session.user.email
     );
   }
+
+  @ApiOperation({ summary: "Decline calendar invite" })
+  @Delete("/invite/:id")
+  async declineInvite(
+    @Param("id") calendarId: string,
+    @Session() session: IUserSession
+  ) {
+    return await this.calendarService.declineInvite(
+      calendarId,
+      session.user.id,
+      session.user.email
+    );
+  }
 }
