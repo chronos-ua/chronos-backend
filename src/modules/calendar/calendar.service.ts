@@ -6,7 +6,7 @@ import {
 import { CreateCalendarDto } from "./dto/create-calendar.dto";
 import { UpdateCalendarDto } from "./dto/update-calendar.dto";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
+import { Document, Model, Types } from "mongoose";
 import { Calendar, ECalendarInviteStatus } from "./schemas/ calendar.schema";
 
 @Injectable()
@@ -15,6 +15,7 @@ export class CalendarService {
     @InjectModel("Calendar") private calendarModel: Model<Calendar>
   ) {}
 
+  // TODO: contribute fix to mongoose typings
   private findById(calendarId: string, customId = false, lean = false) {
     if (customId) {
       return this.calendarModel
@@ -25,12 +26,12 @@ export class CalendarService {
           ]
         })
         .lean(lean)
-        .exec();
+        .exec() as Promise<Calendar | (Calendar & Document) | null>;
     } else {
       return this.calendarModel
         .findById(new Types.ObjectId(calendarId))
         .lean(lean)
-        .exec();
+        .exec() as Promise<Calendar | (Calendar & Document) | null>;
     }
   }
 
