@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException
+} from "@nestjs/common";
 import { CreateCalendarDto } from "./dto/create-calendar.dto";
 import { UpdateCalendarDto } from "./dto/update-calendar.dto";
 import { InjectModel } from "@nestjs/mongoose";
@@ -11,8 +15,23 @@ export class CalendarService {
     @InjectModel("Calendar") private calendarModel: Model<Calendar>
   ) {}
 
-  private findById(calendarId: string) {
-    return this.calendarModel.findById(new Types.ObjectId(calendarId)).exec();
+  private findById(calendarId: string, customId = false, lean = false) {
+    if (customId) {
+      return this.calendarModel
+        .findOne({
+          $or: [
+            { customId: calendarId },
+            { _id: new Types.ObjectId(calendarId) }
+          ]
+        })
+        .lean(lean)
+        .exec();
+    } else {
+      return this.calendarModel
+        .findById(new Types.ObjectId(calendarId))
+        .lean(lean)
+        .exec();
+    }
   }
 
   async create(ownerId: string, createCalendarDto: CreateCalendarDto) {
