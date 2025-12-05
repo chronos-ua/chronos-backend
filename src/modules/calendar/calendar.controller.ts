@@ -20,12 +20,6 @@ import { InviteMemberDto } from "./dto/invite-member.dto";
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
-  @ApiOperation({ summary: "Get all user calendars" })
-  @Get()
-  async getUserCalendars(@Session() session: IUserSession) {
-    return await this.calendarService.getUserCalendars(session.user.id);
-  }
-
   @ApiOperation({ summary: "Create new calendar" })
   @Post()
   async create(
@@ -36,6 +30,12 @@ export class CalendarController {
       session.user.id,
       createCalendarDto
     );
+  }
+
+  @ApiOperation({ summary: "Get all user calendars" })
+  @Get()
+  async getUserCalendars(@Session() session: IUserSession) {
+    return await this.calendarService.getUserCalendars(session.user.id);
   }
 
   @ApiOperation({ summary: "Get calendar by ID" })
@@ -58,20 +58,6 @@ export class CalendarController {
   @Delete(":id")
   remove(@Param("id") id: string, @Session() session: IUserSession) {
     return this.calendarService.remove(id, session.user.id);
-  }
-
-  @ApiOperation({ summary: "Transfer calendar ownership to another user" })
-  @Post("transfer-ownership/:calendarId/:newOwnerId")
-  async transferOwnership(
-    @Param("calendarId") calendarId: string,
-    @Param("newOwnerId") newOwnerId: string,
-    @Session() session: IUserSession
-  ) {
-    return await this.calendarService.transferOwnership(
-      calendarId,
-      newOwnerId,
-      session.user.id
-    );
   }
 
   @ApiOperation({ summary: "Send calendar invite" })
@@ -137,6 +123,12 @@ export class CalendarController {
     );
   }
 
+  @ApiOperation({ summary: "Get saved public calendars" })
+  @Get("/subscriptions")
+  async getSubscriptions(@Session() session: IUserSession) {
+    return await this.calendarService.getSubscriptions(session.user.id);
+  }
+
   @ApiOperation({
     summary: "Remove public calendar",
     description: "Unsubscribe from public calendar"
@@ -152,9 +144,17 @@ export class CalendarController {
     );
   }
 
-  @ApiOperation({ summary: "Get saved public calendars" })
-  @Get("/subscriptions")
-  async getSubscriptions(@Session() session: IUserSession) {
-    return await this.calendarService.getSubscriptions(session.user.id);
+  @ApiOperation({ summary: "Transfer calendar ownership to another user" })
+  @Post("transfer-ownership/:calendarId/:newOwnerId")
+  async transferOwnership(
+    @Param("calendarId") calendarId: string,
+    @Param("newOwnerId") newOwnerId: string,
+    @Session() session: IUserSession
+  ) {
+    return await this.calendarService.transferOwnership(
+      calendarId,
+      newOwnerId,
+      session.user.id
+    );
   }
 }
