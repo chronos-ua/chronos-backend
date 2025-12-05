@@ -75,14 +75,15 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: { room: string; message: string }
   ) {
+    client.to(payload.room).emit("message", {
+      sender: client.id,
+      message: payload.message
+    });
+
     if (process.env.NODE_ENV === "development") {
       this.logger.log(
         `Client ${client.id} sent message to room ${payload.room}: ${payload.message}`
       );
     }
-    client.to(payload.room).emit("message", {
-      sender: client.id,
-      message: payload.message
-    });
   }
 }
