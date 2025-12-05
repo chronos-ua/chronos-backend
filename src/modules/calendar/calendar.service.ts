@@ -149,4 +149,19 @@ export class CalendarService {
 
     throw new NotFoundException();
   }
+
+  async leaveCalendar(calendarId: string, userId: string) {
+    const calendar = await this.findById(calendarId, false, false);
+    if (!calendar) throw new NotFoundException();
+    if (!calendar.members) calendar.members = [];
+    const userObjectId = new Types.ObjectId(userId);
+
+    for (let i = 0; i < calendar.members.length; i++) {
+      if (calendar.members[i].user?.equals(userObjectId)) {
+        calendar.members.splice(i, 1);
+        await calendar.save();
+        break;
+      }
+    }
+  }
 }

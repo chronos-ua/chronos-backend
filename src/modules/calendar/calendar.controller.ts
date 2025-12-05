@@ -86,4 +86,15 @@ export class CalendarController {
       session.user.email
     );
   }
+
+  @Post("/leave/:id")
+  async leaveCalendar(
+    @Param("id") calendarId: string,
+    @Session() session: IUserSession
+  ) {
+    return await this.calendarService.leaveCalendar(
+      calendarId,
+      session.user.id
+    );
+  }
 }
