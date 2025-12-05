@@ -59,13 +59,16 @@ export class ChatService {
     if (!(await this.isAllowedToAccess(contextId, contextType, userId))) {
       throw new Error("Access denied to chat messages for this context.");
     }
-    return await this.chatMessageModel
+    const messages = await this.chatMessageModel
       .find({
         contextId: new Types.ObjectId(contextId),
         contextType: contextType
       })
       .sort({ createdAt: 1 })
+      .lean()
       .exec();
+
+    return messages;
   }
 
   public async isAllowedToAccess(
