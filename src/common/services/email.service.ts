@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger } from "@nestjs/common";
 import nodemailer from "nodemailer";
 import { EMAIL_TEMPLATES } from "../consts/emailTemplates.js";
 import { InternalServerError } from "../consts/errors.js";
+import { Calendar } from "src/modules/calendar/schemas/calendar.schema.js";
 
 export const EMAIL_TRANSPORTER = Symbol("EMAIL_TRANSPORTER");
 
