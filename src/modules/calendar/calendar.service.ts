@@ -10,6 +10,11 @@ export class CalendarService {
   constructor(
     @InjectModel("Calendar") private calendarModel: Model<Calendar>
   ) {}
+
+  private findById(calendarId: string) {
+    return this.calendarModel.findById(new Types.ObjectId(calendarId)).exec();
+  }
+
   async create(ownerId: string, createCalendarDto: CreateCalendarDto) {
     return await this.calendarModel.create({
       owner: new Types.ObjectId(ownerId),
