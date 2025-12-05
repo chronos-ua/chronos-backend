@@ -26,10 +26,17 @@ export class CalendarService {
   }
 
   async findOne(calendarId: string, userId: string) {
+    const userObjectId = new Types.ObjectId(userId);
+
     return await this.calendarModel
       .findOne({
         _id: new Types.ObjectId(calendarId),
-        owner: new Types.ObjectId(userId)
+        $or: [
+          { owner: userObjectId },
+          {
+            "members.user": userObjectId
+          }
+        ]
       })
       .lean()
       .exec();
