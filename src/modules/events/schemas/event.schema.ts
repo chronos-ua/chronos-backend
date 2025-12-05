@@ -21,6 +21,9 @@ export class Event {
   @Prop({ required: true, type: Types.ObjectId, ref: "Calendar", index: true })
   calendarId: Types.ObjectId;
 
+  @Prop({ required: true, type: Types.ObjectId, ref: "User", index: true })
+  creatorId: Types.ObjectId;
+
   // TODO: premium feature?
   @Prop()
   customId?: string;
