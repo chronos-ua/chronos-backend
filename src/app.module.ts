@@ -16,6 +16,7 @@ import { RequestsLogMiddleware } from "./common/middlewares/requests-log.middlew
 import { EventModule } from "./modules/events/event.module";
 import { CalendarService } from "./modules/calendar/calendar.service";
 import { ChatModule } from "./modules/chat/chat.module";
+import { AiModule } from "./common/ai/ai.module";
 
 @Module({
   imports: [
@@ -50,7 +51,8 @@ import { ChatModule } from "./modules/chat/chat.module";
     CalendarModule,
     UsersModule,
     EventModule,
-    ChatModule
+    ChatModule,
+    AiModule
   ],
   controllers: [AppController],
   providers: [AppService]

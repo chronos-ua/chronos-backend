@@ -21,6 +21,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@google/genai": "^1.31.0",
     "@nestjs/common": "^11.1.9",
     "@nestjs/core": "^11.1.9",
     "@nestjs/mapped-types": "*",
