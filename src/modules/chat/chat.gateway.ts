@@ -53,7 +53,7 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() room: string
   ) {
-    if (!room || typeof room !== "string") return;
+    if (!room || typeof room !== "string" || room.length !== 24) return;
     if (
       !(await this.chatService.isAllowedToAccess(
         room,
