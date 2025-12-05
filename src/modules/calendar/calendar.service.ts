@@ -14,11 +14,13 @@ import {
 } from "./schemas/calendar.schema";
 import { IUserSession } from "../auth/auth.interfaces";
 import { InviteMemberDto } from "./dto/invite-member.dto";
+import { User } from "../users/schemas/user.schema";
 
 @Injectable()
 export class CalendarService {
   constructor(
-    @InjectModel("Calendar") private calendarModel: Model<Calendar>
+    @InjectModel("Calendar") private calendarModel: Model<Calendar>,
+    @InjectModel("User") private userModel: Model<User>
   ) {}
 
   // TODO: contribute fix to mongoose typings
@@ -196,5 +198,23 @@ export class CalendarService {
       status: ECalendarInviteStatus.PENDING
     });
     await calendar.save();
+  }
+
+  async subscribeCalendar(calendarId: string, userId: string) {
+    const [calendar, user] = await Promise.all([
+      this.findById(calendarId, true, false),
+      this.userModel.findById(new Types.ObjectId(userId))
+    ]);
+    if (!calendar) throw new NotFoundException();
+    if (!user) throw new NotFoundException();
+
+    if (!user.subscriptions) user.subscriptions = [];
+    if (user.subscriptions.some((sub) => sub.equals(calendar._id)))
+      throw new ForbiddenException("Already subscribed to this calendar");
+
+    user.subscriptions.push(calendar._id);
+    await user.save();
+
+    return calendar;
   }
 }

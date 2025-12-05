@@ -110,4 +110,16 @@ export class CalendarController {
       session.user.id
     );
   }
+
+  @ApiOperation({ summary: "Add public calendar" })
+  @Post("/subscribe/:id")
+  async subscribeCalendar(
+    @Param("id") calendarId: string,
+    @Session() session: IUserSession
+  ) {
+    return await this.calendarService.subscribeCalendar(
+      calendarId,
+      session.user.id
+    );
+  }
 }
