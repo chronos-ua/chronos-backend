@@ -124,7 +124,7 @@ export class CalendarService {
   async acceptInvite(calendarId: string, userId: string, userEmail: string) {
     const calendar = await this.findById(calendarId, true, false);
     if (!calendar) throw new NotFoundException();
-    if (!calendar.members) calendar.members = [];
+    calendar.members ??= [];
     const user = new Types.ObjectId(userId);
 
     for (let member of calendar.members) {
@@ -142,7 +142,7 @@ export class CalendarService {
   async declineInvite(calendarId: string, userId: string, userEmail: string) {
     const calendar = await this.findById(calendarId, true, false);
     if (!calendar) throw new NotFoundException();
-    if (!calendar.members) calendar.members = [];
+    calendar.members ??= [];
     const user = new Types.ObjectId(userId);
 
     let member: Calendar["members"][0];
@@ -161,7 +161,7 @@ export class CalendarService {
   async leaveCalendar(calendarId: string, userId: string) {
     const calendar = await this.findById(calendarId, false, false);
     if (!calendar) throw new NotFoundException();
-    if (!calendar.members) calendar.members = [];
+    calendar.members ??= [];
     const userObjectId = new Types.ObjectId(userId);
 
     for (let i = 0; i < calendar.members.length; i++) {
@@ -188,7 +188,7 @@ export class CalendarService {
     if (!calendar.owner.equals(senderId))
       throw new ForbiddenException("Only owner can send invites");
 
-    if (!calendar.members) calendar.members = [];
+    calendar.members ??= [];
     if (calendar.members.some((m) => m.email === dto.email))
       throw new ForbiddenException("User already invited");
 
@@ -205,10 +205,9 @@ export class CalendarService {
       this.findById(calendarId, true, false),
       this.userModel.findById(new Types.ObjectId(userId))
     ]);
-    if (!calendar) throw new NotFoundException();
-    if (!user) throw new NotFoundException();
+    if (!calendar || !user) throw new NotFoundException();
 
-    if (!user.subscriptions) user.subscriptions = [];
+    user.subscriptions ??= [];
     if (user.subscriptions.some((sub) => sub.equals(calendar._id)))
       throw new ForbiddenException("Already subscribed to this calendar");
 
@@ -223,10 +222,9 @@ export class CalendarService {
       this.findById(calendarId, true, false),
       this.userModel.findById(new Types.ObjectId(userId))
     ]);
-    if (!calendar) throw new NotFoundException();
-    if (!user) throw new NotFoundException();
+    if (!calendar || !user) throw new NotFoundException();
 
-    if (!user.subscriptions) user.subscriptions = [];
+    user.subscriptions ??= [];
     const index = user.subscriptions.findIndex((sub) =>
       sub.equals(calendar._id)
     );
