@@ -64,7 +64,7 @@ export class CalendarController {
   }
 
   @ApiOperation({ summary: "Send calendar invite" })
-  @Post("invite/:calendarId/:email")
+  @Post("invite/:calendarId")
   async sendInvite(
     @Param("calendarId") calendarId: string,
     @Body() dto: InviteMemberDto,
