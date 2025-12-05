@@ -132,16 +132,9 @@ export class CalendarService {
   }
 
   async declineInvite(calendarId: string, userId: string, userEmail: string) {
-    const calendar = await this.calendarModel
-      .findOne({
-        $or: [{ _id: new Types.ObjectId(calendarId) }, { customId: calendarId }]
-      })
-      .exec();
-
+    const calendar = await this.findById(calendarId, true, false);
     if (!calendar) throw new NotFoundException();
-
     if (!calendar.members) calendar.members = [];
-
     const user = new Types.ObjectId(userId);
 
     let member: Calendar["members"][0];
@@ -149,7 +142,6 @@ export class CalendarService {
       member = calendar.members[i];
       if (member.status !== ECalendarInviteStatus.PENDING) continue;
       if (!(member.email === userEmail || member.user?.equals(user))) continue;
-
       calendar.members.splice(i, 1);
       await calendar.save();
       return;
