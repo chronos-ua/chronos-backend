@@ -55,6 +55,9 @@ export class User {
   @Prop()
   telegramChatId?: string;
 
+  @Prop({ type: [{ type: Types.ObjectId, ref: "Calendar" }], default: [] })
+  subscriptions: Types.ObjectId[];
+
   // @Prop({ type: String, ref: "Company" })
   // companyId?: string;
 }
