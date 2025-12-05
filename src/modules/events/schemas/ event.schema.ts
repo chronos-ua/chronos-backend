@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types } from "mongoose";
 
-export enum EventType {
+export enum EEventType {
   ARRANGEMENT = "arrangement",
   TASK = "task",
   REMINDER = "reminder",
@@ -25,8 +25,8 @@ export class Event {
   @Prop()
   description?: string;
 
-  @Prop({ type: String, enum: EventType, default: EventType.ARRANGEMENT })
-  type: EventType;
+  @Prop({ type: String, enum: EEventType, default: EEventType.ARRANGEMENT })
+  type: EEventType;
 
   @Prop({ required: true })
   /** UTC */
