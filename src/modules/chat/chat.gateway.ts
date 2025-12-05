@@ -13,7 +13,12 @@ import { Socket, Server } from "socket.io";
 import { DevOnly } from "src/common/decorators/devOnly.decorator";
 import { ChatService } from "./chat.service";
 import { EChatContext } from "./schemas/chatMessage.schema";
-import { AllowAnonymous, AuthGuard } from "@thallesp/nestjs-better-auth";
+import {
+  AllowAnonymous,
+  AuthGuard,
+  Session
+} from "@thallesp/nestjs-better-auth";
+import type { IUserSession } from "../auth/auth.interfaces";
 
 @WebSocketGateway({
   cors: {
@@ -54,14 +59,15 @@ export class ChatGateway
   @SubscribeMessage("join")
   async handleJoinRoom(
     @ConnectedSocket() client: Socket,
-    @MessageBody() room: string
+    @MessageBody() room: string,
+    @Session() session: IUserSession
   ) {
     if (!room || typeof room !== "string" || room.length !== 24) return;
     if (
       !(await this.chatService.isAllowedToAccess(
         room,
         EChatContext.CALENDAR, // Currently only calendar context is supported
-        client.id
+        session.user.id
       ))
     )
       return;
