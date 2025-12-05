@@ -11,7 +11,8 @@ export type IUserDocument = HydratedDocument<User>;
 
 export const USER_SETTINGS_BOOLEAN_KEYS = Object.freeze([
   "emailNotifications",
-  "telegramNotifications"
+  "telegramNotifications",
+  "allowInvites"
 ] satisfies (keyof IUserSettingsBoolean)[]);
 
 @Schema({ timestamps: true, collection: "user" })
