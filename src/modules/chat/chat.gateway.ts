@@ -7,7 +7,8 @@ import {
   OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer
+  WebSocketServer,
+  WsException
 } from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
 import { DevOnly } from "src/common/decorators/devOnly.decorator";
@@ -96,11 +97,10 @@ export class ChatGateway
     @Session() session: IUserSession
   ) {
     if (typeof payload !== "object" || !payload.room || !payload.message)
-      throw new Error("Invalid message payload");
+      throw new WsException("Invalid message payload");
 
-    if (!client.rooms.has(payload.room)) {
-      throw new Error("Client is not a member of the specified room");
-    }
+    if (!client.rooms.has(payload.room))
+      throw new WsException("You are not in this room");
 
     client.to(payload.room).emit("message", {
       sender: {
