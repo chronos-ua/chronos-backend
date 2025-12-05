@@ -15,12 +15,14 @@ import {
 import { IUserSession } from "../auth/auth.interfaces";
 import { InviteMemberDto } from "./dto/invite-member.dto";
 import { User } from "../users/schemas/user.schema";
+import { EmailService } from "src/common/services/email.service";
 
 @Injectable()
 export class CalendarService {
   constructor(
     @InjectModel("Calendar") private calendarModel: Model<Calendar>,
-    @InjectModel("User") private userModel: Model<User>
+    @InjectModel("User") private userModel: Model<User>,
+    private readonly emailService: EmailService
   ) {}
 
   // TODO: contribute fix to mongoose typings

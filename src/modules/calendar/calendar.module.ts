@@ -4,11 +4,13 @@ import { CalendarController } from "./calendar.controller";
 import { MongooseModule } from "@nestjs/mongoose";
 import { CalendarSchema } from "./schemas/calendar.schema";
 import { UsersModule } from "../users/users.module";
+import { EmailModule } from "src/common/services/email.module";
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: "Calendar", schema: CalendarSchema }]),
-    UsersModule
+    UsersModule,
+    EmailModule
   ],
   controllers: [CalendarController],
   providers: [CalendarService],
