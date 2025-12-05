@@ -202,10 +202,10 @@ export class CalendarService {
     user && (member.user = user._id);
     calendar.members.push(member);
 
-    await Promise.all([
-      calendar.save(),
-      this.emailService.sendCalendarInvite(dto.email, calendar)
-    ]);
+    const email =
+      user?.preferences.emailNotifications &&
+      this.emailService.sendCalendarInvite(dto.email, calendar);
+    await Promise.all([calendar.save(), email]);
   }
 
   async subscribeCalendar(calendarId: string, userId: string) {
