@@ -23,7 +23,9 @@ import type { IUserSession } from "../auth/auth.interfaces";
 
 @WebSocketGateway({
   cors: {
-    origin: "*",
+    origin: process.env.CORS_ORIGINS
+      ? process.env.CORS_ORIGINS.split(",")
+      : "*",
     credentials: true
   }
 })
