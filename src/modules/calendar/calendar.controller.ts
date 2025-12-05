@@ -99,6 +99,7 @@ export class CalendarController {
     );
   }
 
+  @ApiOperation({ summary: "Leave calendar" })
   @Post("/leave/:id")
   async leaveCalendar(
     @Param("id") calendarId: string,
