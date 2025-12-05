@@ -111,7 +111,10 @@ export class CalendarController {
     );
   }
 
-  @ApiOperation({ summary: "Add public calendar" })
+  @ApiOperation({
+    summary: "Save public calendar",
+    description: "Subscribe to public calendar"
+  })
   @Post("/subscribe/:id")
   async subscribeCalendar(
     @Param("id") calendarId: string,
@@ -123,7 +126,10 @@ export class CalendarController {
     );
   }
 
-  @ApiOperation({ summary: "Remove public calendar" })
+  @ApiOperation({
+    summary: "Remove public calendar",
+    description: "Unsubscribe from public calendar"
+  })
   @Post("/unsubscribe/:id")
   async unsubscribeCalendar(
     @Param("id") calendarId: string,
