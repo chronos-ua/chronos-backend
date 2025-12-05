@@ -7,7 +7,13 @@ import { CreateCalendarDto } from "./dto/create-calendar.dto";
 import { UpdateCalendarDto } from "./dto/update-calendar.dto";
 import { InjectModel } from "@nestjs/mongoose";
 import { Document, Model, Types } from "mongoose";
-import { Calendar, ECalendarInviteStatus } from "./schemas/ calendar.schema";
+import {
+  Calendar,
+  ECalendarInviteStatus,
+  ECalendarRole
+} from "./schemas/calendar.schema";
+import { IUserSession } from "../auth/auth.interfaces";
+import { InviteMemberDto } from "./dto/invite-member.dto";
 
 @Injectable()
 export class CalendarService {
@@ -163,5 +169,32 @@ export class CalendarService {
         break;
       }
     }
+  }
+
+  async sendInvite(
+    calendarId: string,
+    sender: IUserSession,
+    dto: InviteMemberDto
+  ) {
+    if (sender.user.email === dto.email)
+      throw new ForbiddenException("Cannot invite yourself");
+
+    const calendar = await this.findById(calendarId, false, false);
+    if (!calendar) throw new NotFoundException("Calendar not found");
+
+    const senderId = new Types.ObjectId(sender.user.id);
+    if (!calendar.owner.equals(senderId))
+      throw new ForbiddenException("Only owner can send invites");
+
+    if (!calendar.members) calendar.members = [];
+    if (calendar.members.some((m) => m.email === dto.email))
+      throw new ForbiddenException("User already invited");
+
+    calendar.members.push({
+      email: dto.email,
+      role: dto.role,
+      status: ECalendarInviteStatus.PENDING
+    });
+    await calendar.save();
   }
 }

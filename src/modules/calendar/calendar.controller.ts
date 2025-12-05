@@ -1,3 +1,4 @@
+import { ECalendarRole } from "./schemas/calendar.schema";
 import type { IUserSession } from "./../auth/auth.interfaces.d";
 import {
   Controller,
@@ -13,6 +14,7 @@ import { CreateCalendarDto } from "./dto/create-calendar.dto";
 import { UpdateCalendarDto } from "./dto/update-calendar.dto";
 import { Session } from "@thallesp/nestjs-better-auth";
 import { ApiOperation } from "@nestjs/swagger";
+import { InviteMemberDto } from "./dto/invite-member.dto";
 
 @Controller("calendar")
 export class CalendarController {
@@ -59,6 +61,16 @@ export class CalendarController {
       newOwnerId,
       session.user.id
     );
+  }
+
+  @ApiOperation({ summary: "Send calendar invite" })
+  @Post("invite/:calendarId/:email")
+  async sendInvite(
+    @Param("calendarId") calendarId: string,
+    @Body() dto: InviteMemberDto,
+    @Session() session: IUserSession
+  ) {
+    return await this.calendarService.sendInvite(calendarId, session, dto);
   }
 
   @ApiOperation({ summary: "Accept calendar invite" })
