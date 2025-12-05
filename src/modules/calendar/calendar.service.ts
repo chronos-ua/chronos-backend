@@ -105,15 +105,10 @@ export class CalendarService {
     newOwnerId: string,
     currentOwnerId: string
   ) {
-    const calendar = await this.calendarModel
-      .findOne({
-        _id: new Types.ObjectId(calendarId),
-        owner: new Types.ObjectId(currentOwnerId)
-      })
-      .exec();
-    if (!calendar) {
-      throw new Error("Calendar not found or you are not the owner");
-    }
+    const calendar = await this.findById(calendarId, false, false);
+    if (!calendar) throw new NotFoundException();
+    if (!calendar.owner.equals(new Types.ObjectId(currentOwnerId)))
+      throw new ForbiddenException();
     calendar.owner = new Types.ObjectId(newOwnerId);
     await calendar.save();
   }
