@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { CalendarService } from "../calendar/calendar.service";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
@@ -11,6 +11,8 @@ export class ChatService {
     @InjectModel("ChatMessage")
     private readonly chatMessageModel: Model<ChatMessage>
   ) {}
+
+  private readonly logger = new Logger(ChatService.name);
 
   async handleMessage(
     contextId: string,
@@ -67,6 +69,22 @@ export class ChatService {
       .sort({ createdAt: 1 })
       .lean()
       .exec();
+
+    this.chatMessageModel
+      .updateMany(
+        {
+          contextId: new Types.ObjectId(contextId),
+          contextType: contextType,
+          readBy: { $ne: new Types.ObjectId(userId) }
+        },
+        {
+          $addToSet: { readBy: new Types.ObjectId(userId) }
+        }
+      )
+      .exec()
+      .catch((e) => {
+        this.logger.error(`Failed to mark messages as read: ${e.message}`);
+      });
 
     return messages;
   }
