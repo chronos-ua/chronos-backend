@@ -20,6 +20,12 @@ import { InviteMemberDto } from "./dto/invite-member.dto";
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
+  @ApiOperation({ summary: "Get all user calendars" })
+  @Get()
+  async getUserCalendars(@Session() session: IUserSession) {
+    return await this.calendarService.getUserCalendars(session.user.id);
+  }
+
   @Post()
   async create(
     @Session() session: IUserSession,

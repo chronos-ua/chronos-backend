@@ -59,6 +59,17 @@ export class CalendarService {
     }
   }
 
+  async getUserCalendars(userId: string) {
+    const userObjectId = new Types.ObjectId(userId);
+
+    return await this.calendarModel
+      .find({
+        $or: [{ owner: userObjectId }, { "members.user": userObjectId }]
+      })
+      .lean()
+      .exec();
+  }
+
   async create(ownerId: string, createCalendarDto: CreateCalendarDto) {
     return await this.calendarModel.create({
       owner: new Types.ObjectId(ownerId),
