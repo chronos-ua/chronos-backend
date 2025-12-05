@@ -16,7 +16,21 @@ export class CalendarService {
   ) {}
 
   // TODO: contribute fix to mongoose typings
-  private findById(calendarId: string, customId = false, lean = false) {
+  private findById(
+    calendarId: string,
+    customId: boolean,
+    lean: true
+  ): Promise<Calendar | null>;
+  private findById(
+    calendarId: string,
+    customId: boolean,
+    lean: false
+  ): Promise<(Calendar & Document) | null>;
+  private findById(
+    calendarId: string,
+    customId: boolean,
+    lean: boolean
+  ): Promise<Calendar | (Calendar & Document) | null> {
     if (customId) {
       return this.calendarModel
         .findOne({
@@ -70,12 +84,7 @@ export class CalendarService {
     calendarId: string,
     updateCalendarDto: UpdateCalendarDto
   ) {
-    const calendar = await this.calendarModel
-      .findOne({
-        _id: new Types.ObjectId(calendarId),
-        owner: new Types.ObjectId(ownerId)
-      })
-      .exec();
+    const calendar = await this.findById(calendarId, false, false);
     if (!calendar) {
       throw new Error("Calendar not found or you are not the owner");
     }
