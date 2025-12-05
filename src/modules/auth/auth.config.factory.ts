@@ -100,8 +100,8 @@ export function createAuth(
     },
     socialProviders: {
       google: {
-        clientId: process.env.GOOGLE_CLIENT_ID as string,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+        clientId: process.env.SMTP_CLIENT_ID as string,
+        clientSecret: process.env.SMTP_CLIENT_SECRET as string
       }
     },
     // Speed up relational queries
