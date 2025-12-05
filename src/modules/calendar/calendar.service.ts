@@ -85,9 +85,9 @@ export class CalendarService {
     updateCalendarDto: UpdateCalendarDto
   ) {
     const calendar = await this.findById(calendarId, false, false);
-    if (!calendar) {
-      throw new Error("Calendar not found or you are not the owner");
-    }
+    if (!calendar) throw new NotFoundException();
+    if (!calendar.owner.equals(new Types.ObjectId(ownerId)))
+      throw new ForbiddenException();
     Object.assign(calendar, updateCalendarDto);
     return await calendar.save();
   }
