@@ -53,18 +53,16 @@ export class CalendarService {
   async findOne(calendarId: string, userId: string) {
     const userObjectId = new Types.ObjectId(userId);
 
-    return await this.calendarModel
-      .findOne({
-        _id: new Types.ObjectId(calendarId),
-        $or: [
-          { owner: userObjectId },
-          {
-            "members.user": userObjectId
-          }
-        ]
-      })
-      .lean()
-      .exec();
+    const calendar = await this.findById(calendarId, false, true);
+    if (!calendar) throw new NotFoundException();
+    if (
+      !calendar.owner.equals(userObjectId) &&
+      !calendar.members?.some((member) => member.user?.equals(userObjectId))
+    ) {
+      throw new ForbiddenException();
+    }
+
+    return calendar;
   }
 
   async update(
