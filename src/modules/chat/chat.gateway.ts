@@ -75,6 +75,8 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: { room: string; message: string }
   ) {
+    if (typeof payload !== "object" || !payload.room || !payload.message)
+      throw new Error("Invalid message payload");
     client.to(payload.room).emit("message", {
       sender: client.id,
       message: payload.message
