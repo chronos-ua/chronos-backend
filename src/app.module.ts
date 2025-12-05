@@ -15,6 +15,7 @@ import { EmailService } from "./common/services/email.service";
 import { RequestsLogMiddleware } from "./common/middlewares/requests-log.middleware";
 import { EventModule } from "./modules/events/event.module";
 import { CalendarService } from "./modules/calendar/calendar.service";
+import { ChatModule } from "./modules/chat/chat.module";
 
 @Module({
   imports: [
@@ -48,7 +49,8 @@ import { CalendarService } from "./modules/calendar/calendar.service";
     EmailModule,
     CalendarModule,
     UsersModule,
-    EventModule
+    EventModule,
+    ChatModule
   ],
   controllers: [AppController],
   providers: [AppService]
