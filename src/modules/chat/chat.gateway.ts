@@ -11,18 +11,19 @@ import {
 } from "@nestjs/websockets";
 import { Socket, Server } from "socket.io";
 import { DevOnly } from "src/common/decorators/devOnly.decorator";
+import { ChatService } from "./chat.service";
+import { EChatContext } from "./schemas/chatMessage.schema";
 
 @WebSocketGateway({
   cors: {
-    origin: process.env.CORS_ORIGINS
-      ? process.env.CORS_ORIGINS.split(",")
-      : ["http://localhost:3000", "http://localhost:3000"],
+    origin: "*",
     credentials: true
   }
 })
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
+  constructor(private readonly chatService: ChatService) {}
   private readonly logger = new Logger(ChatGateway.name);
 
   afterInit(server: Server) {
@@ -48,11 +49,20 @@ export class ChatGateway
   }
 
   @SubscribeMessage("join")
-  handleJoinRoom(
+  async handleJoinRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() room: string
   ) {
     if (!room || typeof room !== "string") return;
+    if (
+      !(await this.chatService.isAllowedToAccess(
+        room,
+        EChatContext.CALENDAR, // Currently only calendar context is supported
+        client.id
+      ))
+    )
+      return;
+
     client.join(room.trim());
     if (process.env.NODE_ENV === "development") {
       this.logger.log(`Client ${client.id} joined room ${room}`);

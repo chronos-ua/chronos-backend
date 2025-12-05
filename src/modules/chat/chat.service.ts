@@ -20,13 +20,8 @@ export class ChatService {
   ) {
     switch (contextType) {
       case EChatContext.CALENDAR:
-        const calendar = await this.calendarService.isMember(
-          contextId,
-          senderId
-        );
-        if (!calendar) {
-          throw new Error("Access denied to the specified calendar.");
-        }
+        // Allowing to join room only if user is member of calendar
+        // So no additional checks are needed here
         break;
       //TODO: event
       default:
@@ -67,5 +62,19 @@ export class ChatService {
       })
       .sort({ createdAt: 1 })
       .exec();
+  }
+
+  public async isAllowedToAccess(
+    contextId: string,
+    contextType: EChatContext,
+    userId: string
+  ): Promise<boolean> {
+    switch (contextType) {
+      case EChatContext.CALENDAR:
+        const calendar = await this.calendarService.isMember(contextId, userId);
+        return !!calendar;
+      default:
+        return false;
+    }
   }
 }
