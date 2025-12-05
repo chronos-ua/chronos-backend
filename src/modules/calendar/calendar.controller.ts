@@ -140,4 +140,10 @@ export class CalendarController {
       session.user.id
     );
   }
+
+  @ApiOperation({ summary: "Get saved public calendars" })
+  @Get("/subscriptions")
+  async getSubscriptions(@Session() session: IUserSession) {
+    return await this.calendarService.getSubscriptions(session.user.id);
+  }
 }

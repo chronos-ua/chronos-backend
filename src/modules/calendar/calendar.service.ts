@@ -241,4 +241,15 @@ export class CalendarService {
     user.subscriptions.splice(index, 1);
     await user.save();
   }
+
+  async getSubscriptions(userId: string) {
+    const user = await this.userModel
+      .findById(new Types.ObjectId(userId))
+      .lean()
+      .populate("subscriptions")
+      .exec();
+    if (!user) throw new NotFoundException();
+
+    return user.subscriptions;
+  }
 }
