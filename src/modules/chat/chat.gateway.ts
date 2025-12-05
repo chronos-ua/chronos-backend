@@ -16,8 +16,7 @@ import { DevOnly } from "src/common/decorators/devOnly.decorator";
   cors: {
     origin: "*",
     credentials: true
-  },
-  namespace: "chat"
+  }
 })
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -29,19 +28,59 @@ export class ChatGateway
   }
 
   handleConnection(@ConnectedSocket() client: Socket) {
-    this.logger.log(`Client connected: ${client.id}`);
+    if (process.env.NODE_ENV === "development") {
+      this.logger.log(`Client connected: ${client.id}`);
+    }
   }
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
+    if (process.env.NODE_ENV === "development") {
+      this.logger.log(`Client disconnected: ${client.id}`);
+    }
   }
 
   @SubscribeMessage("echo")
-  handleMessage(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: any
-  ): string {
+  handleEcho(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
     this.logger.log(`Received message: ${data}`);
-    return data;
+    client.emit("echo", data);
+  }
+
+  @SubscribeMessage("join")
+  handleJoinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room: string
+  ) {
+    if (!room || typeof room !== "string") return;
+    client.join(room.trim());
+    if (process.env.NODE_ENV === "development") {
+      this.logger.log(`Client ${client.id} joined room ${room}`);
+    }
+  }
+
+  @SubscribeMessage("leave")
+  handleLeaveRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room: string
+  ) {
+    client.leave(room);
+    if (process.env.NODE_ENV === "development") {
+      this.logger.log(`Client ${client.id} left room ${room}`);
+    }
+  }
+
+  @SubscribeMessage("message")
+  handleRoomMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: { room: string; message: string }
+  ) {
+    if (process.env.NODE_ENV === "development") {
+      this.logger.log(
+        `Client ${client.id} sent message to room ${payload.room}: ${payload.message}`
+      );
+    }
+    client.to(payload.room).emit("message", {
+      sender: client.id,
+      message: payload.message
+    });
   }
 }
