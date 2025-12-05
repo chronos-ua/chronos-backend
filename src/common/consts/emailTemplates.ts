@@ -40,6 +40,16 @@ const EMAIL_TEMPLATES = {
       <br>
       <p>If you did not request this email, please ignore it.</p>
     `;
+  },
+  calendarInvite: (calendar: { title: string }) => {
+    return `
+      <h1>Chronos</h1>
+      <br>
+      <p>You have been invited to join the calendar "<strong>${calendar.title}</strong>".</p>
+      <p>Please log in to your Chronos account to accept or decline the invitation.</p>
+      <br>
+      <p>If you did not expect this invitation, please ignore this email.</p>
+    `;
   }
 };
 

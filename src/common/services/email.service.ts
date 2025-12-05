@@ -77,6 +77,16 @@ class EmailService {
     await this.send(mailOptions, this.sendMagicLink.name);
   }
 
+  public async sendCalendarInvite(email: string, calendar: Calendar) {
+    const mailOptions: nodemailer.SendMailOptions = {
+      from: this.sender,
+      to: email,
+      subject: `You're invited to join the calendar "${calendar.title}"`,
+      html: EMAIL_TEMPLATES.calendarInvite(calendar)
+    };
+    await this.send(mailOptions, this.sendCalendarInvite.name);
+  }
+
   private async send(opt: nodemailer.SendMailOptions, caller: string) {
     try {
       await this.transporter.sendMail(opt);
