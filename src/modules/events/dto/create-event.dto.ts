@@ -7,16 +7,10 @@ import {
   IsString,
   Length
 } from "class-validator";
-import { EEventType, EReminderMethod } from "../schemas/ event.schema";
+import { EEventType, EReminderMethod } from "../schemas/event.schema";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateEventDto {
-  @ApiProperty()
-  @Length(24, 24)
-  @Transform(({ value }) => value.trim())
-  @IsString()
-  calendarId: string;
-
   @ApiProperty()
   @Length(1, 255)
   @Transform(({ value }) => value.trim())
