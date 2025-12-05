@@ -183,7 +183,10 @@ export class CalendarService {
     if (sender.user.email === dto.email)
       throw new ForbiddenException("Cannot invite yourself");
 
-    const calendar = await this.findById(calendarId, false, false);
+    const [calendar, user] = await Promise.all([
+      this.findById(calendarId, false, false),
+      this.userModel.findOne({ email: dto.email })
+    ]);
     if (!calendar) throw new NotFoundException("Calendar not found");
 
     const senderId = new Types.ObjectId(sender.user.id);
@@ -194,12 +197,15 @@ export class CalendarService {
     if (calendar.members.some((m) => m.email === dto.email))
       throw new ForbiddenException("User already invited");
 
-    calendar.members.push({
-      email: dto.email,
-      role: dto.role,
-      status: ECalendarInviteStatus.PENDING
-    });
-    await calendar.save();
+    const member = { ...dto } as Calendar["members"][0];
+    member.status = ECalendarInviteStatus.PENDING;
+    user && (member.user = user._id);
+    calendar.members.push(member);
+
+    await Promise.all([
+      calendar.save(),
+      this.emailService.sendCalendarInvite(dto.email, calendar)
+    ]);
   }
 
   async subscribeCalendar(calendarId: string, userId: string) {
