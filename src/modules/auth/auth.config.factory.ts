@@ -19,10 +19,20 @@ export function createAuth(
     database: mongodbAdapter(db),
     // Use Redis as secondary storage for things like session cookies, rate limiting, etc.
     secondaryStorage: {
-      get: async (key) => await redis.get(key),
+      get: async (key) => {
+        const value = await redis.get(key);
+        if (!value) return null;
+        try {
+          return JSON.parse(value);
+        } catch (e) {
+          logger.error(`Failed to parse Redis value for key ${key}:`, e);
+          return null;
+        }
+      },
       set: async (key, value, ttl) => {
-        if (ttl) await redis.set(key, value, "EX", ttl);
-        else await redis.set(key, value);
+        const serialized = JSON.stringify(value);
+        if (ttl) await redis.set(key, serialized, "EX", ttl);
+        else await redis.set(key, serialized);
       },
       delete: async (key) => void (await redis.del(key))
     },
