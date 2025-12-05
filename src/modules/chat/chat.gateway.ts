@@ -77,6 +77,11 @@ export class ChatGateway
   ) {
     if (typeof payload !== "object" || !payload.room || !payload.message)
       throw new Error("Invalid message payload");
+
+    if (!client.rooms.has(payload.room)) {
+      throw new Error("Client is not a member of the specified room");
+    }
+
     client.to(payload.room).emit("message", {
       sender: client.id,
       message: payload.message
