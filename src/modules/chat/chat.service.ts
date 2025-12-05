@@ -53,8 +53,12 @@ export class ChatService {
 
   public async getMessagesByContext(
     contextId: string,
-    contextType: EChatContext
+    contextType: EChatContext,
+    userId: string
   ): Promise<ChatMessage[]> {
+    if (!(await this.isAllowedToAccess(contextId, contextType, userId))) {
+      throw new Error("Access denied to chat messages for this context.");
+    }
     return await this.chatMessageModel
       .find({
         contextId: new Types.ObjectId(contextId),
