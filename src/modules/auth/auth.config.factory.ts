@@ -3,7 +3,7 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import Redis from "ioredis";
 import { EmailService } from "../../common/services/email.service";
 import { Logger } from "@nestjs/common";
-import { magicLink, openAPI, twoFactor } from "better-auth/plugins";
+import { magicLink, oneTap, openAPI, twoFactor } from "better-auth/plugins";
 import { CalendarService } from "../calendar/calendar.service";
 
 export function createAuth(
@@ -136,7 +136,8 @@ export function createAuth(
             await emailService.sendOTP(user.email, otp);
           }
         }
-      })
+      }),
+      oneTap()
     ]
   });
 }
