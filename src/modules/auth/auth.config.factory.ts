@@ -3,7 +3,7 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import Redis from "ioredis";
 import { EmailService } from "../../common/services/email.service";
 import { Logger } from "@nestjs/common";
-import { magicLink, openAPI } from "better-auth/plugins";
+import { magicLink, openAPI, twoFactor } from "better-auth/plugins";
 import { CalendarService } from "../calendar/calendar.service";
 
 export function createAuth(
@@ -125,6 +125,15 @@ export function createAuth(
           await emailService.sendMagicLink(email, url, token);
           if (process.env.NODE_ENV !== "production") {
             logger.log(`Sent magic link email to ${email} ${url}`);
+          }
+        }
+      }),
+      twoFactor({
+        issuer: "Chronos App",
+        otpOptions: {
+          period: 5,
+          sendOTP: async ({ user, otp }, ctx) => {
+            await emailService.sendOTP(user.email, otp);
           }
         }
       })

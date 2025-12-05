@@ -50,6 +50,15 @@ const EMAIL_TEMPLATES = {
       <br>
       <p>If you did not expect this invitation, please ignore this email.</p>
     `;
+  },
+  otp: (otp: string) => {
+    return `
+      <h1>Chronos</h1>
+      <br>
+      <p>Your One-Time Password (OTP) is:</p>
+      <h2>${otp}</h2>
+      <p>This OTP is valid for 5 minutes. If you did not request this, please ignore this email.</p>
+    `;
   }
 };
 

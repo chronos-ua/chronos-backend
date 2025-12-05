@@ -88,6 +88,16 @@ class EmailService {
     await this.send(mailOptions, this.sendCalendarInvite.name);
   }
 
+  public async sendOTP(email: string, otp: string) {
+    const mailOptions: nodemailer.SendMailOptions = {
+      from: this.sender,
+      to: email,
+      subject: "Your One-Time Password (OTP)",
+      html: EMAIL_TEMPLATES.otp(otp)
+    };
+    await this.send(mailOptions, this.sendOTP.name);
+  }
+
   private async send(opt: nodemailer.SendMailOptions, caller: string) {
     try {
       await this.transporter.sendMail(opt);
