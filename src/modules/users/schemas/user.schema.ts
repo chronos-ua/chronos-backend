@@ -40,7 +40,8 @@ export class User {
       startOfWeek: "monday",
       timeFormat: "24h",
       telegramNotifications: false,
-      emailNotifications: false
+      emailNotifications: false,
+      allowInvites: true
     }
   })
   preferences: {
@@ -50,6 +51,7 @@ export class User {
     timeFormat: "12h" | "24h";
     telegramNotifications: boolean;
     emailNotifications: boolean;
+    allowInvites: boolean;
   };
 
   @Prop()
