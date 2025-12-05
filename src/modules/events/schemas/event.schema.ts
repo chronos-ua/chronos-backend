@@ -5,7 +5,8 @@ export enum EEventType {
   ARRANGEMENT = "arrangement",
   TASK = "task",
   REMINDER = "reminder",
-  EVENT = "event"
+  EVENT = "event",
+  HOLIDAY = "holiday"
 }
 
 export enum EReminderMethod {
