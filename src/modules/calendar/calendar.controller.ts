@@ -26,6 +26,7 @@ export class CalendarController {
     return await this.calendarService.getUserCalendars(session.user.id);
   }
 
+  @ApiOperation({ summary: "Create new calendar" })
   @Post()
   async create(
     @Session() session: IUserSession,
@@ -37,11 +38,13 @@ export class CalendarController {
     );
   }
 
+  @ApiOperation({ summary: "Get calendar by ID" })
   @Get(":id")
   findOne(@Param("id") calendarId: string, @Session() session: IUserSession) {
     return this.calendarService.findOne(calendarId, session.user.id);
   }
 
+  @ApiOperation({ summary: "Update calendar by ID" })
   @Patch(":id")
   update(
     @Param("id") id: string,
@@ -51,11 +54,13 @@ export class CalendarController {
     return this.calendarService.update(session.user.id, id, updateCalendarDto);
   }
 
+  @ApiOperation({ summary: "Delete calendar by ID" })
   @Delete(":id")
   remove(@Param("id") id: string, @Session() session: IUserSession) {
     return this.calendarService.remove(id, session.user.id);
   }
 
+  @ApiOperation({ summary: "Transfer calendar ownership to another user" })
   @Post("transfer-ownership/:calendarId/:newOwnerId")
   async transferOwnership(
     @Param("calendarId") calendarId: string,
