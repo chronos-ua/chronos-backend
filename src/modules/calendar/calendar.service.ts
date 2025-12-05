@@ -1,9 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateCalendarDto } from "./dto/create-calendar.dto";
 import { UpdateCalendarDto } from "./dto/update-calendar.dto";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
-import { Calendar } from "./schemas/ calendar.schema";
+import { Calendar, ECalendarInviteStatus } from "./schemas/ calendar.schema";
 
 @Injectable()
 export class CalendarService {
@@ -93,5 +93,30 @@ export class CalendarService {
     }
     calendar.owner = new Types.ObjectId(newOwnerId);
     await calendar.save();
+  }
+
+  async acceptInvite(calendarId: string, userId: string, userEmail: string) {
+    const calendar = await this.calendarModel
+      .findOne({
+        $or: [{ _id: new Types.ObjectId(calendarId) }, { customId: calendarId }]
+      })
+      .exec();
+
+    if (!calendar) throw new NotFoundException();
+
+    if (!calendar.members) calendar.members = [];
+
+    const user = new Types.ObjectId(userId);
+
+    for (let member of calendar.members) {
+      if (member.status !== ECalendarInviteStatus.PENDING) continue;
+      if (!(member.email === userEmail || member.user?.equals(user))) continue;
+
+      member.status = ECalendarInviteStatus.ACCEPTED;
+      await calendar.save();
+      return;
+    }
+
+    throw new NotFoundException();
   }
 }

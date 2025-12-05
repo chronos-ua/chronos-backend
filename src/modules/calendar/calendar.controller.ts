@@ -12,6 +12,7 @@ import { CalendarService } from "./calendar.service";
 import { CreateCalendarDto } from "./dto/create-calendar.dto";
 import { UpdateCalendarDto } from "./dto/update-calendar.dto";
 import { Session } from "@thallesp/nestjs-better-auth";
+import { ApiOperation } from "@nestjs/swagger";
 
 @Controller("calendar")
 export class CalendarController {
@@ -57,6 +58,19 @@ export class CalendarController {
       calendarId,
       newOwnerId,
       session.user.id
+    );
+  }
+
+  @ApiOperation({ summary: "Accept calendar invite" })
+  @Get("/invite/:id")
+  async acceptInvite(
+    @Param("id") calendarId: string,
+    @Session() session: IUserSession
+  ) {
+    return await this.calendarService.acceptInvite(
+      calendarId,
+      session.user.id,
+      session.user.email
     );
   }
 }
