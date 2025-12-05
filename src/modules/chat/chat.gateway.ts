@@ -14,7 +14,9 @@ import { DevOnly } from "src/common/decorators/devOnly.decorator";
 
 @WebSocketGateway({
   cors: {
-    origin: "*",
+    origin: process.env.CORS_ORIGINS
+      ? process.env.CORS_ORIGINS.split(",")
+      : ["http://localhost:3000", "http://localhost:3000"],
     credentials: true
   }
 })
