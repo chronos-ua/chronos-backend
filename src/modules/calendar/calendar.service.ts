@@ -263,4 +263,16 @@ export class CalendarService {
 
     return user.subscriptions;
   }
+
+  async isMember(calendarId: string, userId: string): Promise<boolean> {
+    const calendar = await this.findById(calendarId, false, true);
+    if (!calendar) return false;
+    const userObjectId = new Types.ObjectId(userId);
+
+    return calendar.members?.some(
+      (member) =>
+        member.status === ECalendarInviteStatus.ACCEPTED &&
+        member.user?.equals(userObjectId)
+    );
+  }
 }
