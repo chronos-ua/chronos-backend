@@ -117,6 +117,7 @@ export class CalendarService {
       if (member.status !== ECalendarInviteStatus.PENDING) continue;
       if (!(member.email === userEmail || member.user?.equals(user))) continue;
 
+      member.user = user; // In case of email-only invitation
       member.status = ECalendarInviteStatus.ACCEPTED;
       await calendar.save();
       return;
