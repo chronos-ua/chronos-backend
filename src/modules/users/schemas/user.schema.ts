@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
 import { BooleanKeys } from "src/common/utils/booleanKeys.util";
 
 export type IUserSettings = typeof User.prototype.preferences;
