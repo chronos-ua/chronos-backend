@@ -114,29 +114,21 @@ export class CalendarService {
   }
 
   async acceptInvite(calendarId: string, userId: string, userEmail: string) {
-    const calendar = await this.calendarModel
-      .findOne({
-        $or: [{ _id: new Types.ObjectId(calendarId) }, { customId: calendarId }]
-      })
-      .exec();
-
+    const calendar = await this.findById(calendarId, true, false);
     if (!calendar) throw new NotFoundException();
-
     if (!calendar.members) calendar.members = [];
-
     const user = new Types.ObjectId(userId);
 
     for (let member of calendar.members) {
       if (member.status !== ECalendarInviteStatus.PENDING) continue;
       if (!(member.email === userEmail || member.user?.equals(user))) continue;
-
       member.user = user; // In case of email-only invitation
       member.status = ECalendarInviteStatus.ACCEPTED;
       await calendar.save();
       return;
     }
 
-    throw new NotFoundException();
+    throw new ForbiddenException();
   }
 
   async declineInvite(calendarId: string, userId: string, userEmail: string) {
