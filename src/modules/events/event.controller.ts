@@ -14,7 +14,9 @@ import { CreateEventDto } from "./dto/create-event.dto";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { Session } from "@thallesp/nestjs-better-auth";
 import type { IUserSession } from "../auth/auth.interfaces";
-import { ApiOperation, ApiQuery } from "@nestjs/swagger";
+import { ApiOkResponse, ApiOperation, ApiQuery } from "@nestjs/swagger";
+import { Event } from "./schemas/event.schema";
+import { ResponseEventDto } from "./dto/response-event.dto";
 
 @Controller("events")
 export class EventController {
@@ -29,6 +31,11 @@ export class EventController {
     return await this.eventService.create(session.user.id, createEventDto);
   }
 
+  @ApiOkResponse({
+    description: "List of user events",
+    type: ResponseEventDto,
+    isArray: true
+  })
   @ApiOperation({ summary: "Get all user events" })
   @ApiQuery({
     name: "calendarId",
@@ -43,6 +50,11 @@ export class EventController {
     return await this.eventService.getUserEvents(session.user.id, calendarId);
   }
 
+  @ApiOkResponse({
+    description: "List of user events",
+    type: ResponseEventDto,
+    isArray: true
+  })
   @ApiOperation({ summary: "Get events by calendar ID" })
   @Get("calendar/:calendarId")
   async getEventsByCalendar(
@@ -55,6 +67,11 @@ export class EventController {
     );
   }
 
+  @ApiOkResponse({
+    description: "List of user events",
+    type: ResponseEventDto,
+    isArray: true
+  })
   @ApiOperation({ summary: "Get events by date range" })
   @ApiQuery({
     name: "startDate",
@@ -100,6 +117,10 @@ export class EventController {
     );
   }
 
+  @ApiOkResponse({
+    description: "List of user events",
+    type: ResponseEventDto
+  })
   @ApiOperation({ summary: "Get event by ID" })
   @Get(":id")
   async findOne(
