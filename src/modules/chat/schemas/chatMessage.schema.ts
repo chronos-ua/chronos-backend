@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Types } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
 
 export enum EChatContext {
   CALENDAR = "calendar",
@@ -8,8 +8,10 @@ export enum EChatContext {
   PROFILE = "profile"
 }
 
+export type IChatMessageDocument = HydratedDocument<ChatMessage>;
+
 @Schema({ timestamps: true, collection: "chatMessage" })
-export class ChatMessage extends Document {
+export class ChatMessage {
   @Prop({ required: true, type: Types.ObjectId, index: true })
   contextId: Types.ObjectId;
 
