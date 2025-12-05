@@ -8,6 +8,12 @@ export enum EEventType {
   EVENT = "event"
 }
 
+export enum EReminderMethod {
+  EMAIL = "email",
+  PUSH = "push",
+  TELEGRAM = "telegram"
+}
+
 export type IEventDocument = HydratedDocument<Event>;
 
 @Schema({ timestamps: true, collection: "event" })
@@ -58,15 +64,15 @@ export class Event {
 
   @Prop([
     {
-      method: { type: String, enum: ["email", "push", "telegram"] },
+      method: { type: String, enum: EReminderMethod },
       minutesBefore: Number
     }
   ])
-  reminders: Array<{ method: string; minutesBefore: number }>;
+  reminders: Array<{ method: EReminderMethod; minutesBefore: number }>;
 
   // TODO: Integrations
-  // @Prop()
-  // googleEventId?: string;
+  @Prop()
+  googleEventId?: string;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
