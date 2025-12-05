@@ -20,6 +20,7 @@ import {
   Session
 } from "@thallesp/nestjs-better-auth";
 import type { IUserSession } from "../auth/auth.interfaces";
+import { DEV } from "src/common/consts/env";
 
 @WebSocketGateway({
   cors: {
@@ -41,15 +42,11 @@ export class ChatGateway
   }
 
   handleConnection(@ConnectedSocket() client: Socket) {
-    if (process.env.NODE_ENV === "development") {
-      this.logger.log(`Client connected: ${client.id}`);
-    }
+    DEV && this.logger.log(`Client connected: ${client.id}`);
   }
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
-    if (process.env.NODE_ENV === "development") {
-      this.logger.log(`Client disconnected: ${client.id}`);
-    }
+    DEV && this.logger.log(`Client disconnected: ${client.id}`);
   }
 
   @SubscribeMessage("echo")
@@ -76,9 +73,7 @@ export class ChatGateway
       return;
 
     client.join(room.trim());
-    if (process.env.NODE_ENV === "development") {
-      this.logger.log(`Client ${client.id} joined room ${room}`);
-    }
+    DEV && this.logger.log(`Client ${client.id} joined room ${room}`);
   }
 
   @SubscribeMessage("leave")
@@ -87,9 +82,7 @@ export class ChatGateway
     @MessageBody() room: string
   ) {
     client.leave(room);
-    if (process.env.NODE_ENV === "development") {
-      this.logger.log(`Client ${client.id} left room ${room}`);
-    }
+    DEV && this.logger.log(`Client ${client.id} left room ${room}`);
   }
 
   @SubscribeMessage("message")
@@ -112,10 +105,9 @@ export class ChatGateway
       message: payload.message
     });
 
-    if (process.env.NODE_ENV === "development") {
+    DEV &&
       this.logger.log(
-        `Client ${client.id} sent message to room ${payload.room}: ${payload.message}`
+        `Client ${client.id} sent msg ${payload.room}: ${payload.message}`
       );
-    }
   }
 }

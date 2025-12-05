@@ -1,9 +1,8 @@
 import { applyDecorators } from "@nestjs/common";
+import { DEV } from "../consts/env";
 
 export const DevOnly = (
   ...decorators: (ClassDecorator | MethodDecorator | PropertyDecorator)[]
 ) => {
-  return process.env.NODE_ENV !== "production"
-    ? applyDecorators(...decorators)
-    : applyDecorators();
+  return DEV ? applyDecorators(...decorators) : applyDecorators();
 };

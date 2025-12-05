@@ -17,6 +17,7 @@ import { EventModule } from "./modules/events/event.module";
 import { CalendarService } from "./modules/calendar/calendar.service";
 import { ChatModule } from "./modules/chat/chat.module";
 import { AiModule } from "./common/ai/ai.module";
+import { DEV } from "./common/consts/env";
 
 @Module({
   imports: [
@@ -61,9 +62,8 @@ export class AppModule implements NestModule {
   private readonly logger = new Logger(AppModule.name);
 
   configure(consumer: MiddlewareConsumer) {
-    if (process.env.NODE_ENV !== "production") {
-      this.logger.log("RequestsLogMiddleware enabled");
-      consumer.apply(RequestsLogMiddleware).forRoutes("*");
-    }
+    if (!DEV) return;
+    this.logger.log("RequestsLogMiddleware enabled");
+    consumer.apply(RequestsLogMiddleware).forRoutes("*");
   }
 }

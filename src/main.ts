@@ -7,13 +7,14 @@ import express from "express";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { SwaggerTheme, SwaggerThemeNameEnum } from "swagger-themes";
 import { IoAdapter } from "@nestjs/platform-socket.io";
+import { DEV } from "./common/consts/env";
 
 async function bootstrap() {
   const logger = new Logger("Bootstrap");
 
   const NestOptions: NestApplicationOptions = {};
 
-  if (process.env.NODE_ENV !== "production") {
+  if (DEV) {
     logger.log("Running in development mode");
     NestOptions["logger"] = ["error", "warn", "log", "debug", "verbose"];
   }

@@ -4,6 +4,7 @@ import { GoogleModule } from "../google/google.module";
 import { GoogleAuthService } from "../google/google.service";
 import { GOOGLE_MAIL_SCOPE } from "../google/google.constants";
 import { EmailService, EMAIL_TRANSPORTER } from "./email.service";
+import { DEV } from "../consts/env";
 
 const buildOauthTransport = async (
   googleAuthService: GoogleAuthService
@@ -44,7 +45,7 @@ const emailTransporterProvider = {
     try {
       await transporter.verify();
     } catch {
-      if (process.env.NODE_ENV !== "production") {
+      if (DEV) {
         console.warn("Email transporter verification failed");
       } else {
         throw new Error("Failed to verify email transporter");

@@ -1,3 +1,4 @@
+import { DEV } from "./../../common/consts/env";
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import Redis from "ioredis";
@@ -41,13 +42,9 @@ export function createAuth(
       sendResetPassword: async ({ user, url, token }, request) => {
         if (user?.email && token) {
           await emailService.sendPasswordResetEmail(user.email, url, token);
-          if (process.env.NODE_ENV !== "production") {
-            logger.log(`Sent password reset email to ${user.email} ${url}`);
-          }
+          DEV && logger.log(`Sent pass reset email to ${user.email} ${url}`);
         } else {
-          logger.warn(
-            "Cannot send password reset email: missing user email or token"
-          );
+          logger.warn("Cannot send pass reset: missing email or token");
         }
       }
     },
@@ -56,9 +53,7 @@ export function createAuth(
       sendVerificationEmail: async ({ user, url, token }) => {
         if (user?.email && token) {
           await emailService.sendEmailVerification(user.email, url, token);
-          if (process.env.NODE_ENV !== "production") {
-            logger.log(`Sent verification email to ${user.email} ${url}`);
-          }
+          DEV && logger.log(`Sent verification email to ${user.email} ${url}`);
         } else {
           logger.warn(
             "Cannot send verification email: missing user email or token"
@@ -66,9 +61,7 @@ export function createAuth(
         }
       },
       afterEmailVerification: async (user) => {
-        if (process.env.NODE_ENV !== "production") {
-          logger.log(`User ${user.id} has verified their email ${user.email}`);
-        }
+        DEV && logger.log(`User ${user.id} has verified their email`);
       }
     },
     databaseHooks: {
@@ -78,9 +71,7 @@ export function createAuth(
             // Create default calendar for a new user
             try {
               await calendarService.createDefault(user.id);
-              if (process.env.NODE_ENV !== "production") {
-                logger.log(`Created default calendar for new user ${user.id}`);
-              }
+              DEV && logger.log(`Created default calendar for noob ${user.id}`);
             } catch (error) {
               logger.error(
                 `Failed to create default calendar for user ${user.id}: ${error}`
@@ -123,9 +114,7 @@ export function createAuth(
       magicLink({
         sendMagicLink: async ({ email, token, url }, ctx) => {
           await emailService.sendMagicLink(email, url, token);
-          if (process.env.NODE_ENV !== "production") {
-            logger.log(`Sent magic link email to ${email} ${url}`);
-          }
+          DEV && logger.log(`Sent magic link email to ${email} ${url}`);
         }
       }),
       twoFactor({
