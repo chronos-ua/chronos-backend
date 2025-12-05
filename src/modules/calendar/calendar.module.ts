@@ -4,7 +4,7 @@ import { CalendarController } from "./calendar.controller";
 import { MongooseModule } from "@nestjs/mongoose";
 import { CalendarSchema } from "./schemas/calendar.schema";
 import { UsersModule } from "../users/users.module";
-import { EmailModule } from "src/common/services/email.module";
+import { EmailModule } from "src/common/email/email.module";
 
 @Module({
   imports: [

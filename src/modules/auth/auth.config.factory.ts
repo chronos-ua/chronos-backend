@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import Redis from "ioredis";
-import { EmailService } from "../../common/services/email.service";
+import { EmailService } from "../../common/email/email.service";
 import { Logger } from "@nestjs/common";
 import { magicLink, oneTap, openAPI, twoFactor } from "better-auth/plugins";
 import { CalendarService } from "../calendar/calendar.service";
