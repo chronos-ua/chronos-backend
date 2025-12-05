@@ -92,7 +92,8 @@ export class ChatGateway
   @SubscribeMessage("message")
   handleRoomMessage(
     @ConnectedSocket() client: Socket,
-    @MessageBody() payload: { room: string; message: string }
+    @MessageBody() payload: { room: string; message: string },
+    @Session() session: IUserSession
   ) {
     if (typeof payload !== "object" || !payload.room || !payload.message)
       throw new Error("Invalid message payload");
@@ -102,7 +103,10 @@ export class ChatGateway
     }
 
     client.to(payload.room).emit("message", {
-      sender: client.id,
+      sender: {
+        id: session.user.id,
+        name: session.user.name
+      },
       message: payload.message
     });
 
