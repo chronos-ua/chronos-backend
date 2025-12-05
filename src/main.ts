@@ -6,6 +6,7 @@ import { Logger, NestApplicationOptions, ValidationPipe } from "@nestjs/common";
 import express from "express";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { SwaggerTheme, SwaggerThemeNameEnum } from "swagger-themes";
+import { IoAdapter } from "@nestjs/platform-socket.io";
 
 async function bootstrap() {
   const logger = new Logger("Bootstrap");
@@ -48,7 +49,7 @@ async function bootstrap() {
     credentials: true
   });
 
-  app.useWebSocketAdapter(new UwsSocketIoAdapter(app));
+  app.useWebSocketAdapter(new IoAdapter(app));
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle("Huh?")
