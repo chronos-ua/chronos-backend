@@ -1,4 +1,4 @@
-import { Logger } from "@nestjs/common";
+import { Logger, UseGuards } from "@nestjs/common";
 import {
   ConnectedSocket,
   MessageBody,
@@ -13,6 +13,7 @@ import { Socket, Server } from "socket.io";
 import { DevOnly } from "src/common/decorators/devOnly.decorator";
 import { ChatService } from "./chat.service";
 import { EChatContext } from "./schemas/chatMessage.schema";
+import { AuthGuard } from "@thallesp/nestjs-better-auth";
 
 @WebSocketGateway({
   cors: {
@@ -20,6 +21,7 @@ import { EChatContext } from "./schemas/chatMessage.schema";
     credentials: true
   }
 })
+@UseGuards(AuthGuard)
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
