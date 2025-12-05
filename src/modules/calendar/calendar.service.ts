@@ -217,4 +217,22 @@ export class CalendarService {
 
     return calendar;
   }
+
+  async unsubscribeCalendar(calendarId: string, userId: string) {
+    const [calendar, user] = await Promise.all([
+      this.findById(calendarId, true, false),
+      this.userModel.findById(new Types.ObjectId(userId))
+    ]);
+    if (!calendar) throw new NotFoundException();
+    if (!user) throw new NotFoundException();
+
+    if (!user.subscriptions) user.subscriptions = [];
+    const index = user.subscriptions.findIndex((sub) =>
+      sub.equals(calendar._id)
+    );
+    if (index === -1) return; // Not subscribed
+
+    user.subscriptions.splice(index, 1);
+    await user.save();
+  }
 }

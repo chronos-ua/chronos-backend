@@ -122,4 +122,16 @@ export class CalendarController {
       session.user.id
     );
   }
+
+  @ApiOperation({ summary: "Remove public calendar" })
+  @Post("/unsubscribe/:id")
+  async unsubscribeCalendar(
+    @Param("id") calendarId: string,
+    @Session() session: IUserSession
+  ) {
+    return await this.calendarService.unsubscribeCalendar(
+      calendarId,
+      session.user.id
+    );
+  }
 }
