@@ -13,7 +13,7 @@ import { Socket, Server } from "socket.io";
 import { DevOnly } from "src/common/decorators/devOnly.decorator";
 import { ChatService } from "./chat.service";
 import { EChatContext } from "./schemas/chatMessage.schema";
-import { AuthGuard } from "@thallesp/nestjs-better-auth";
+import { AllowAnonymous, AuthGuard } from "@thallesp/nestjs-better-auth";
 
 @WebSocketGateway({
   cors: {
@@ -45,6 +45,7 @@ export class ChatGateway
   }
 
   @SubscribeMessage("echo")
+  @AllowAnonymous()
   handleEcho(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
     this.logger.log(`Received message: ${data}`);
     client.emit("echo", data);
