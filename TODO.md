@@ -4,24 +4,24 @@
 
 ### AUTH
 
-- boomer style
-- google / telegram
+- [x] boomer style
+- [x] google / telegram
 
 ### Weather
 
-- 3rd party API data source
-- Cache
+- [x] 3rd party API data source
+- [x] Cache
 
 ### Calendar
 
 #### Main
 
 - CRUD
-- Multiple calendars per user
-- Customization (ui)
-- - color scheme
-- - calendar title
-- - idk, smtn else
+- [x] Multiple calendars per user
+- [x] Customization (ui)
+- - [x] color scheme
+- - [x] calendar title
+- - [x] idk, smtn else
 
 ### Holidays
 
@@ -34,35 +34,33 @@
 
 ### Colaborations
 
-- Invite users to calendars
-- Invite r / rw perm
-- Invite links
+- [x] Invite users to calendars
+- [x] Invite r / rw perm
+- [x] Invite links
 - - Link prewiew (SSR?)
-- - Custom url? (premium?)
+- - [x] Custom url? (premium?)
 
 ### Chat
 
-- per calendar?!
+- [x] per calendar?!
 - lookie:
-- - avatar? custom / first+last name first letters
-- - name
-- - plain text + emoji? so UTF-8
-- fetch msg while been offline. offset? date?
-- extra: some encryption
+- - [x] avatar? custom / first+last name first letters
+- - [x] name
+- - [x] plain text + emoji? so UTF-8
+- [x] fetch msg while been offline. offset? date?
 
 ### Event Categories
 
-- CRUD
-- Category specific features.. hmmm
+- [x] CRUD
+- [x] Category specific features.. hmmm
 - - reminder?
-- - need to came up w smth
 
 ### Huh?
 
 - Sync with google calendar and more
-- Mass events?
+- [x] Mass events?
 - Company created events?
-- Public / private / paid
+- [x] Public / private / paid
 
 ---
 
@@ -76,7 +74,7 @@
 
 ### WS
 
-- Sticky ws?
+- [x] Sticky ws?
 - custom WS parser?
 - - plain JSON? Node v25
 - - https://socket.io/docs/v4/custom-parser/
@@ -84,7 +82,7 @@
 
 ### http
 
-- Replace http with uWebSockets.js
+- Replace http with uWebSockets.js # failed
 - play with compression?
 
 ### Common
