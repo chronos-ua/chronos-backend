@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Session } from "@nestjs/common";
+import { Body, Controller, Get } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { ChatService } from "./chat.service";
 import type { IUserSession } from "../auth/auth.interfaces";
 import { GetMessagesDto, GetMessagesResponseDto } from "./dto/get-messages.dto";
+import { Session } from "@thallesp/nestjs-better-auth";
 
 @Controller("chat")
 export class ChatController {
