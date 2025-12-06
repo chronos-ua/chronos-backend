@@ -1,6 +1,7 @@
 import { Transform } from "class-transformer";
 import {
   IsBoolean,
+  IsDate,
   IsDateString,
   IsEnum,
   IsOptional,
