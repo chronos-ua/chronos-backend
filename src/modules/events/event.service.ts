@@ -137,6 +137,7 @@ export class EventService {
 
     const event = await this.eventModel.create({
       ...createEventDto,
+      calendarId: new Types.ObjectId(createEventDto.calendarId),
       creatorId: new Types.ObjectId(userId)
     });
 
