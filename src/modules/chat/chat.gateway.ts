@@ -59,21 +59,26 @@ export class ChatGateway
   @SubscribeMessage("join")
   async handleJoinRoom(
     @ConnectedSocket() client: Socket,
-    @MessageBody() room: string,
+    @MessageBody() payload: { room: string; context: EChatContext },
     @Session() session: IUserSession
   ) {
-    if (!room || typeof room !== "string" || room.length !== 24) return;
+    if (
+      !payload.room ||
+      typeof payload.room !== "string" ||
+      payload.room.length !== 24
+    )
+      return;
     if (
       !(await this.chatService.isAllowedToAccess(
-        room,
-        EChatContext.CALENDAR, // Currently only calendar context is supported
+        payload.room,
+        payload.context,
         session.user.id
       ))
     )
       return;
 
-    client.join(room.trim());
-    DEV && this.logger.log(`Client ${client.id} joined room ${room}`);
+    client.join(payload.room.trim());
+    DEV && this.logger.log(`Client ${client.id} joined room ${payload.room}`);
   }
 
   @SubscribeMessage("leave")

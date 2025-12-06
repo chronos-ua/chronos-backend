@@ -55,12 +55,14 @@ const EMAIL_TEMPLATES = {
 
   // notifications
 
-  calendarInvite: (calendar: ICalendarWithId) => {
+  calendarInvite: (title: string, url: string) => {
     return `
       <h1>Chronos</h1>
       <br>
-      <p>You have been invited to join the calendar "<strong>${calendar.title}</strong>".</p>
-      <p>Please log in to your Chronos account to accept or decline the invitation.</p>
+      <p>You have been invited to join the calendar "<strong>${title}</strong>".</p>
+      <br>
+      <p>Click the link below to accept the invitation:</p>
+      <a href="${url}">${url}</a>
       <br>
       <p>If you did not expect this invitation, please ignore this email.</p>
     `;

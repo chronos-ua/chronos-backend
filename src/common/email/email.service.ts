@@ -87,7 +87,10 @@ class EmailService {
       from: this.sender,
       to: email,
       subject: `You're invited to join the calendar "${calendar.title}"`,
-      html: EMAIL_TEMPLATES.calendarInvite(calendar)
+      html: EMAIL_TEMPLATES.calendarInvite(
+        calendar.title,
+        `${process.env.BASE_URL}/calendar/invite/${calendar._id}`
+      )
     };
     await this.send(mailOptions, this.sendCalendarInvite.name);
   }
