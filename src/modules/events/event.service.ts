@@ -135,6 +135,22 @@ export class EventService {
       .exec();
   }
 
+  // Events the user is subscribed to (invited and accepted)
+  async getSubscribedEvents(userId: string) {
+    const userObjectId = new Types.ObjectId(userId);
+    return await this.eventModel
+      .find({
+        members: {
+          $elemMatch: {
+            user: userObjectId,
+            status: EEventInviteStatus.ACCEPTED
+          }
+        }
+      })
+      .lean()
+      .exec();
+  }
+
   async create(userId: string, createEventDto: CreateEventDto) {
     if (new Date(createEventDto.end) < new Date(createEventDto.start)) {
       throw new BadRequestException("End date must be after start date");

@@ -122,6 +122,19 @@ export class EventController {
   }
 
   @ApiOkResponse({
+    description: "List of subscribed events",
+    type: ResponseEventDto,
+    isArray: true
+  })
+  @ApiOperation({
+    summary: "Get events the user is subscribed to (invited and accepted)"
+  })
+  @Get("subscribed")
+  async getSubscribedEvents(@Session() session: IUserSession) {
+    return await this.eventService.getSubscribedEvents(session.user.id);
+  }
+
+  @ApiOkResponse({
     description: "Event details",
     type: ResponseEventDto
   })
