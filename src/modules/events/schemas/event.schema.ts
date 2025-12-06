@@ -78,7 +78,7 @@ export class Event {
   @Prop()
   googleEventId?: string;
 
-  @Prop({ default: false })
+  @Prop({ default: true })
   isPrivate?: boolean;
 }
 
