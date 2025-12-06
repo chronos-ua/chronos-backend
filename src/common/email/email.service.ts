@@ -8,6 +8,7 @@ import nodemailer from "nodemailer";
 import { EMAIL_TEMPLATES } from "../consts/emailTemplates.js";
 import { Calendar } from "src/modules/calendar/schemas/calendar.schema.js";
 import { ICalendarWithId } from "src/modules/calendar/calendar.service.js";
+import { IEventWithId } from "src/modules/events/schemas/event.schema.js";
 
 export const EMAIL_TRANSPORTER = Symbol("EMAIL_TRANSPORTER");
 
@@ -93,6 +94,19 @@ class EmailService {
       )
     };
     await this.send(mailOptions, this.sendCalendarInvite.name);
+  }
+
+  public async sendEventInvite(email: string, event: IEventWithId) {
+    const mailOptions: nodemailer.SendMailOptions = {
+      from: this.sender,
+      to: email,
+      subject: `You're invited to the event "${event.title}"`,
+      html: EMAIL_TEMPLATES.eventInvite(
+        event.title,
+        `${process.env.BASE_URL}/events/${event._id}`
+      )
+    };
+    await this.send(mailOptions, this.sendEventInvite.name);
   }
 
   public async sendOTP(email: string, otp: string) {

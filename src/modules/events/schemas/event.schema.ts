@@ -15,8 +15,19 @@ export enum EReminderMethod {
   TELEGRAM = "telegram"
 }
 
-export type IEventDocument = HydratedDocument<Event>;
+export enum EEventRole {
+  OWNER = "owner",
+  EDITOR = "editor",
+  VIEWER = "viewer"
+}
 
+export enum EEventInviteStatus {
+  PENDING = "pending",
+  ACCEPTED = "accepted"
+}
+
+export type IEventDocument = HydratedDocument<Event>;
+export type IEventWithId = Event & { _id: Types.ObjectId };
 @Schema({ timestamps: true, collection: "event" })
 export class Event {
   @Prop({ required: true, type: Types.ObjectId, ref: "Calendar", index: true })
@@ -80,6 +91,25 @@ export class Event {
 
   @Prop({ default: true })
   isPrivate?: boolean;
+
+  @Prop([
+    {
+      user: { type: Types.ObjectId, ref: "User" },
+      role: { type: String, enum: EEventRole },
+      status: {
+        type: String,
+        enum: EEventInviteStatus,
+        default: EEventInviteStatus.PENDING
+      },
+      email: String // For invitations to users not yet registered
+    }
+  ])
+  members: Array<{
+    user?: Types.ObjectId;
+    role: EEventRole;
+    status: string;
+    email?: string;
+  }>;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);

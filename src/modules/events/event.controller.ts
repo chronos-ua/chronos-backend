@@ -19,6 +19,7 @@ import { Event } from "./schemas/event.schema";
 import { ResponseEventDto } from "./dto/response-event.dto";
 import { MongoObjectIdStringDto } from "src/common/dto/mongoObjectIdDto";
 import { CloneEventDto } from "./dto/clone-event.dto";
+import { InviteMemberDto } from "./dto/invite-member.dto";
 
 @Controller("events")
 export class EventController {
@@ -163,5 +164,55 @@ export class EventController {
   @Delete(":id")
   async remove(@Param("id") eventId: string, @Session() session: IUserSession) {
     return await this.eventService.remove(eventId, session.user.id);
+  }
+
+  @ApiOperation({
+    summary: "Send event invite",
+    parameters: [
+      { name: "id", in: "path", required: true, description: "Event ID" }
+    ]
+  })
+  @Post("invite/:id")
+  async sendInvite(
+    @Param() params: MongoObjectIdStringDto,
+    @Body() dto: InviteMemberDto,
+    @Session() session: IUserSession
+  ) {
+    return await this.eventService.sendInvite(params.id, session, dto);
+  }
+
+  @ApiOperation({ summary: "Accept event invite" })
+  @Get("/invite/:id")
+  async acceptInvite(
+    @Param() params: MongoObjectIdStringDto,
+    @Session() session: IUserSession
+  ) {
+    return await this.eventService.acceptInvite(
+      params.id,
+      session.user.id,
+      session.user.email
+    );
+  }
+
+  @ApiOperation({ summary: "Decline event invite" })
+  @Delete("/invite/:id")
+  async declineInvite(
+    @Param() params: MongoObjectIdStringDto,
+    @Session() session: IUserSession
+  ) {
+    return await this.eventService.declineInvite(
+      params.id,
+      session.user.id,
+      session.user.email
+    );
+  }
+
+  @ApiOperation({ summary: "Leave event" })
+  @Post("/leave/:id")
+  async leaveEvent(
+    @Param() params: MongoObjectIdStringDto,
+    @Session() session: IUserSession
+  ) {
+    return await this.eventService.leaveEvent(params.id, session.user.id);
   }
 }

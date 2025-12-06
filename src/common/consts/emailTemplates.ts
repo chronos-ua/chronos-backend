@@ -66,6 +66,18 @@ const EMAIL_TEMPLATES = {
       <br>
       <p>If you did not expect this invitation, please ignore this email.</p>
     `;
+  },
+  eventInvite: (title: string, url: string) => {
+    return `
+      <h1>Chronos</h1>
+      <br>
+      <p>You have been invited to the event "<strong>${title}</strong>".</p>
+      <br>
+      <p>Click the link below to view the event details:</p>
+      <a href="${url}">${url}</a>
+      <br>
+      <p>If you did not expect this invitation, please ignore this email.</p>
+    `;
   }
 };
 

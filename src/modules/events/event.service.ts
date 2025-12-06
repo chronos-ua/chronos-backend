@@ -8,19 +8,23 @@ import { CreateEventDto } from "./dto/create-event.dto";
 import { UpdateEventDto } from "./dto/update-event.dto";
 import { InjectModel } from "@nestjs/mongoose";
 import { Document, Model, Types } from "mongoose";
-import { Event } from "./schemas/event.schema";
+import { EEventInviteStatus, Event } from "./schemas/event.schema";
 import { CalendarService } from "../calendar/calendar.service";
 import {
   Calendar,
   ECalendarInviteStatus,
   ECalendarRole
 } from "../calendar/schemas/calendar.schema";
+import { IUserSession } from "../auth/auth.interfaces";
+import { EmailService } from "src/common/email/email.service";
 
 @Injectable()
 export class EventService {
   constructor(
     @InjectModel("Event") private eventModel: Model<Event>,
-    private readonly calendarService: CalendarService
+    private readonly calendarService: CalendarService,
+    @InjectModel("User") private userModel: Model<any>,
+    private readonly emailService: EmailService
   ) {}
 
   // TODO: contribute fix to mongoose typings
@@ -340,5 +344,86 @@ export class EventService {
       })
       .lean()
       .exec();
+  }
+
+  async sendInvite(eventId: string, sender: IUserSession, dto: any) {
+    if (sender.user.email === dto.email)
+      throw new ForbiddenException("Cannot invite yourself");
+
+    const [event, user] = await Promise.all([
+      this.findById(eventId, false, false),
+      this.userModel.findOne({ email: dto.email })
+    ]);
+    if (!event) throw new NotFoundException("Event not found");
+
+    const senderId = new Types.ObjectId(sender.user.id);
+    if (!event.creatorId?.equals(senderId))
+      throw new ForbiddenException("Only owner can send invites");
+
+    event.members ??= [];
+    if (event.members.some((m) => m.email === dto.email))
+      throw new ForbiddenException("User already invited");
+
+    const member = { ...dto } as Event["members"][0];
+    member.status = EEventInviteStatus.PENDING;
+    user && (member.user = user._id);
+    event.members.push(member);
+
+    const email =
+      user?.preferences.emailNotifications &&
+      this.emailService.sendEventInvite(dto.email, event);
+    await Promise.all([event.save(), email]);
+  }
+
+  async acceptInvite(eventId: string, userId: string, userEmail: string) {
+    const event = await this.findById(eventId, true, false);
+    if (!event) throw new NotFoundException("Event not found");
+    event.members ??= [];
+    const user = new Types.ObjectId(userId);
+
+    for (let member of event.members) {
+      if (member.status !== EEventInviteStatus.PENDING) continue;
+      if (!(member.email === userEmail || member.user?.equals(user))) continue;
+      member.user = user; // In case of email-only invitation
+      member.status = EEventInviteStatus.ACCEPTED;
+      await event.save();
+      return;
+    }
+
+    throw new ForbiddenException("No pending invite found for this user");
+  }
+
+  async declineInvite(eventId: string, userId: string, userEmail: string) {
+    const event = await this.findById(eventId, true, false);
+    if (!event) throw new NotFoundException("Event not found");
+    event.members ??= [];
+    const user = new Types.ObjectId(userId);
+
+    let member: Event["members"][0];
+    for (let i = 0; i < event.members.length; i++) {
+      member = event.members[i];
+      if (member.status !== EEventInviteStatus.PENDING) continue;
+      if (!(member.email === userEmail || member.user?.equals(user))) continue;
+      event.members.splice(i, 1);
+      await event.save();
+      return;
+    }
+
+    throw new NotFoundException("No pending invite found for this user");
+  }
+
+  async leaveEvent(eventId: string, userId: string) {
+    const event = await this.findById(eventId, false, false);
+    if (!event) throw new NotFoundException("Event not found");
+    event.members ??= [];
+    const userObjectId = new Types.ObjectId(userId);
+
+    for (let i = 0; i < event.members.length; i++) {
+      if (event.members[i].user?.equals(userObjectId)) {
+        event.members.splice(i, 1);
+        await event.save();
+        break;
+      }
+    }
   }
 }
