@@ -100,7 +100,8 @@ export class ChatGateway
     client.to(payload.room).emit("message", {
       sender: {
         id: session.user.id,
-        name: session.user.name
+        name: session.user.name,
+        room: payload.room
       },
       message: payload.message
     });
