@@ -17,6 +17,10 @@ import { InviteMemberDto } from "./dto/invite-member.dto";
 import { User } from "../users/schemas/user.schema";
 import { EmailService } from "src/common/email/email.service";
 
+type ICalendarWithId = Calendar & {
+  _id: Types.ObjectId;
+};
+
 @Injectable()
 export class CalendarService {
   constructor(
@@ -30,17 +34,17 @@ export class CalendarService {
     calendarId: string,
     customId: boolean,
     lean: true
-  ): Promise<Calendar | null>;
+  ): Promise<ICalendarWithId | null>;
   private findById(
     calendarId: string,
     customId: boolean,
     lean: false
-  ): Promise<(Calendar & Document) | null>;
+  ): Promise<(ICalendarWithId & Document) | null>;
   private findById(
     calendarId: string,
     customId: boolean,
     lean: boolean
-  ): Promise<Calendar | (Calendar & Document) | null> {
+  ): Promise<(Calendar & Document) | null> {
     if (customId) {
       return this.calendarModel
         .findOne({
@@ -50,12 +54,12 @@ export class CalendarService {
           ]
         })
         .lean(lean)
-        .exec() as Promise<Calendar | (Calendar & Document) | null>;
+        .exec() as any;
     } else {
       return this.calendarModel
         .findById(new Types.ObjectId(calendarId))
         .lean(lean)
-        .exec() as Promise<Calendar | (Calendar & Document) | null>;
+        .exec() as any;
     }
   }
 
