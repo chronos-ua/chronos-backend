@@ -4,9 +4,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsString, Length } from "class-validator";
 import { Transform } from "class-transformer";
 
-export class UpdateEventDto extends PartialType(
-  OmitType(CreateEventDto, ["creatorId"] as const)
-) {
+export class UpdateEventDto extends PartialType(CreateEventDto) {
   @ApiProperty()
   @Length(24, 24)
   @Transform(({ value }) => value.trim())

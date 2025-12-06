@@ -12,12 +12,6 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateEventDto {
   @ApiProperty()
-  @Length(24, 24)
-  @Transform(({ value }) => value.trim())
-  @IsString()
-  creatorId: string;
-
-  @ApiProperty()
   @Length(1, 255)
   @Transform(({ value }) => value.trim())
   @IsString()
