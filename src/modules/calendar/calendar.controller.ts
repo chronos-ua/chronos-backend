@@ -7,7 +7,9 @@ import {
   Body,
   Patch,
   Param,
-  Delete
+  Delete,
+  UsePipes,
+  ValidationPipe
 } from "@nestjs/common";
 import { CalendarService } from "./calendar.service";
 import { CreateCalendarDto } from "./dto/create-calendar.dto";
@@ -15,6 +17,8 @@ import { UpdateCalendarDto } from "./dto/update-calendar.dto";
 import { Session } from "@thallesp/nestjs-better-auth";
 import { ApiOperation } from "@nestjs/swagger";
 import { InviteMemberDto } from "./dto/invite-member.dto";
+import { MongoObjectIdStringDto } from "src/common/dto/mongoObjectIdDto";
+import { TransferOwnershipParamsDto } from "./dto/transfer-ownership-params.dto";
 
 @Controller("calendar")
 export class CalendarController {
@@ -40,44 +44,54 @@ export class CalendarController {
 
   @ApiOperation({ summary: "Get calendar by ID" })
   @Get(":id")
-  findOne(@Param("id") calendarId: string, @Session() session: IUserSession) {
-    return this.calendarService.findOne(calendarId, session.user.id);
+  findOne(
+    @Param() params: MongoObjectIdStringDto,
+    @Session() session: IUserSession
+  ) {
+    return this.calendarService.findOne(params.id, session.user.id);
   }
 
   @ApiOperation({ summary: "Update calendar by ID" })
   @Patch(":id")
   update(
-    @Param("id") id: string,
+    @Param() params: MongoObjectIdStringDto,
     @Body() updateCalendarDto: UpdateCalendarDto,
     @Session() session: IUserSession
   ) {
-    return this.calendarService.update(session.user.id, id, updateCalendarDto);
+    return this.calendarService.update(
+      session.user.id,
+      params.id,
+      updateCalendarDto
+    );
   }
 
   @ApiOperation({ summary: "Delete calendar by ID" })
   @Delete(":id")
-  remove(@Param("id") id: string, @Session() session: IUserSession) {
-    return this.calendarService.remove(id, session.user.id);
+  remove(
+    @Param() params: MongoObjectIdStringDto,
+    @Session() session: IUserSession
+  ) {
+    return this.calendarService.remove(params.id, session.user.id);
   }
 
   @ApiOperation({ summary: "Send calendar invite" })
   @Post("invite/:calendarId")
   async sendInvite(
-    @Param("calendarId") calendarId: string,
+    @Param() params: MongoObjectIdStringDto,
     @Body() dto: InviteMemberDto,
     @Session() session: IUserSession
   ) {
-    return await this.calendarService.sendInvite(calendarId, session, dto);
+    return await this.calendarService.sendInvite(params.id, session, dto);
   }
 
   @ApiOperation({ summary: "Accept calendar invite" })
   @Get("/invite/:id")
   async acceptInvite(
-    @Param("id") calendarId: string,
+    @Param() params: MongoObjectIdStringDto,
     @Session() session: IUserSession
   ) {
     return await this.calendarService.acceptInvite(
-      calendarId,
+      params.id,
       session.user.id,
       session.user.email
     );
@@ -86,11 +100,11 @@ export class CalendarController {
   @ApiOperation({ summary: "Decline calendar invite" })
   @Delete("/invite/:id")
   async declineInvite(
-    @Param("id") calendarId: string,
+    @Param() params: MongoObjectIdStringDto,
     @Session() session: IUserSession
   ) {
     return await this.calendarService.declineInvite(
-      calendarId,
+      params.id,
       session.user.id,
       session.user.email
     );
@@ -99,13 +113,10 @@ export class CalendarController {
   @ApiOperation({ summary: "Leave calendar" })
   @Post("/leave/:id")
   async leaveCalendar(
-    @Param("id") calendarId: string,
+    @Param() params: MongoObjectIdStringDto,
     @Session() session: IUserSession
   ) {
-    return await this.calendarService.leaveCalendar(
-      calendarId,
-      session.user.id
-    );
+    return await this.calendarService.leaveCalendar(params.id, session.user.id);
   }
 
   @ApiOperation({
@@ -114,11 +125,11 @@ export class CalendarController {
   })
   @Post("/subscribe/:id")
   async subscribeCalendar(
-    @Param("id") calendarId: string,
+    @Param() params: MongoObjectIdStringDto,
     @Session() session: IUserSession
   ) {
     return await this.calendarService.subscribeCalendar(
-      calendarId,
+      params.id,
       session.user.id
     );
   }
@@ -135,25 +146,24 @@ export class CalendarController {
   })
   @Post("/unsubscribe/:id")
   async unsubscribeCalendar(
-    @Param("id") calendarId: string,
+    @Param() params: MongoObjectIdStringDto,
     @Session() session: IUserSession
   ) {
     return await this.calendarService.unsubscribeCalendar(
-      calendarId,
+      params.id,
       session.user.id
     );
   }
 
   @ApiOperation({ summary: "Transfer calendar ownership to another user" })
-  @Post("transfer-ownership/:calendarId/:newOwnerId")
+  @Post("/transfer-ownership/:calendarId/:newOwnerId")
   async transferOwnership(
-    @Param("calendarId") calendarId: string,
-    @Param("newOwnerId") newOwnerId: string,
+    @Param() params: TransferOwnershipParamsDto,
     @Session() session: IUserSession
   ) {
     return await this.calendarService.transferOwnership(
-      calendarId,
-      newOwnerId,
+      params.calendarId,
+      params.newOwnerId,
       session.user.id
     );
   }
