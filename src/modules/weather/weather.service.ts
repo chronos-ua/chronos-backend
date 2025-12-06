@@ -6,7 +6,7 @@ import { getOrSet } from "src/common/utils/cache.util";
 @Injectable()
 export class WeatherService {
   private readonly GLOBAL_CACHE_PREFIX = "weather:v1:";
-  private readonly TTL_SECONDS = 3 * 60 * 60; // 3h
+  private readonly TTL_SECONDS = 1.5 * 60 * 60; // 1.5h
   private readonly logger = new Logger(WeatherService.name);
 
   constructor(@Inject(IOREDIS_CLIENT) private readonly redis: Redis) {}
