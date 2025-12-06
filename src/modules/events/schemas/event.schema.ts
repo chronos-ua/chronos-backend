@@ -77,6 +77,9 @@ export class Event {
   // TODO: Integrations
   @Prop()
   googleEventId?: string;
+
+  @Prop({ default: false })
+  isPrivate?: boolean;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);

@@ -98,4 +98,9 @@ export class CreateEventDto {
   @IsString()
   @IsOptional()
   googleEventId?: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  isPrivate?: boolean;
 }
