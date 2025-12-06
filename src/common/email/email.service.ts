@@ -37,7 +37,7 @@ class EmailService {
       to: email,
       subject: "Password Reset",
       // html: EMAIL_TEMPLATES.resetPassword(this.getEmailResetLink(token))
-      html: EMAIL_TEMPLATES.resetPassword(url)
+      html: EMAIL_TEMPLATES.resetPassword(this.getEmailResetLink(token))
     };
 
     await this.send(mailOptions, this.sendPasswordResetEmail.name);
@@ -53,8 +53,7 @@ class EmailService {
       to: email,
       subject: "Email Verification",
       html: EMAIL_TEMPLATES.emailConfirmation(
-        // this.getEmailVerificationLink(token)
-        url
+        this.getEmailVerificationLink(token)
       )
     };
 
@@ -114,11 +113,11 @@ class EmailService {
   }
 
   private getEmailResetLink(token: string) {
-    return `https://uevent.pp.ua/auth/password-reset/${token}`;
+    return `${process.env.BASE_URL}/password-reset/${token}`;
   }
 
   private getEmailVerificationLink(token: string) {
-    return `https://uevent.pp.ua/auth/verify-email/${token}`;
+    return `${process.env.BASE_URL}/verify-email/${token}`;
   }
 }
 
