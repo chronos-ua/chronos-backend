@@ -8,6 +8,9 @@ export class Notification {
   @Prop({ required: true })
   title: string;
 
+  @Prop()
+  text: string;
+
   @Prop({ default: false })
   isRead: boolean;
 
