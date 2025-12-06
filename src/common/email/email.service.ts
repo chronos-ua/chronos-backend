@@ -119,6 +119,21 @@ class EmailService {
     await this.send(mailOptions, this.sendOTP.name);
   }
 
+  public async sendGenericNotification(
+    email: string,
+    title: string,
+    message?: string,
+    url?: string
+  ) {
+    const mailOptions: nodemailer.SendMailOptions = {
+      from: this.sender,
+      to: email,
+      subject: title,
+      html: EMAIL_TEMPLATES.genericNotification(title, message, url)
+    };
+    await this.send(mailOptions, this.sendGenericNotification.name);
+  }
+
   private async send(opt: nodemailer.SendMailOptions, caller: string) {
     try {
       await this.transporter.sendMail(opt);

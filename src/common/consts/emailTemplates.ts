@@ -78,6 +78,19 @@ const EMAIL_TEMPLATES = {
       <br>
       <p>If you did not expect this invitation, please ignore this email.</p>
     `;
+  },
+  genericNotification: (title: string, message?: string, url?: string) => {
+    return `
+      <h1>Chronos</h1>
+      <br>
+      <h2>${title}</h2>
+      ${message ? `<p>${message}</p><br>` : ""}
+      ${
+        url
+          ? `<p>For more details, click the link below:</p><a href="${url}">${url}</a><br>`
+          : ""
+      }
+    `;
   }
 };
 
