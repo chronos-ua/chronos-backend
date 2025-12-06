@@ -19,3 +19,17 @@ services:
       - ./redis_data:/data
     restart: unless-stopped
     command: redis-server --appendonly yes
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chronos_api
+    hostname: chronos_api
+    network_mode: host
+    volumes:
+      - ./.env:/app/.env:ro
+    depends_on:
+      - mongodb
+      - redis
+    restart: unless-stopped
