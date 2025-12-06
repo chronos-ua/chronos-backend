@@ -116,6 +116,7 @@ export class EventService {
 
       return await this.eventModel
         .find({
+          creatorId: userObjectId,
           calendarId: targetCalendarId
         })
         .lean()
