@@ -17,7 +17,7 @@ import { InviteMemberDto } from "./dto/invite-member.dto";
 import { User } from "../users/schemas/user.schema";
 import { EmailService } from "src/common/email/email.service";
 
-type ICalendarWithId = Calendar & {
+export type ICalendarWithId = Calendar & {
   _id: Types.ObjectId;
 };
 
