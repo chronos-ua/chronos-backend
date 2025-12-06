@@ -375,7 +375,12 @@ export class EventService {
     await Promise.all([event.save(), email]);
   }
 
-  async acceptInvite(eventId: string, userId: string, userEmail: string) {
+  async acceptInvite(
+    eventId: string,
+    calendarId: string | undefined,
+    userId: string,
+    userEmail: string
+  ) {
     const event = await this.findById(eventId, true, false);
     if (!event) throw new NotFoundException("Event not found");
     event.members ??= [];
@@ -387,6 +392,30 @@ export class EventService {
       member.user = user; // In case of email-only invitation
       member.status = EEventInviteStatus.ACCEPTED;
       await event.save();
+
+      // If calendarId provided, clone event to user's calendar
+      if (calendarId) {
+        const isMember = await this.calendarService.isMember(
+          calendarId,
+          userId
+        );
+        if (!isMember) {
+          throw new ForbiddenException(
+            "User does not have access to the specified calendar"
+          );
+        }
+
+        // Clone the event to the user's calendar
+        const eventData = event.toObject();
+        delete eventData._id;
+        await this.eventModel.create({
+          ...eventData,
+          calendarId: new Types.ObjectId(calendarId),
+          creatorId: new Types.ObjectId(userId),
+          members: [] // New event instance doesn't inherit members
+        });
+      }
+
       return;
     }
 

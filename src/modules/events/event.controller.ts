@@ -20,6 +20,7 @@ import { ResponseEventDto } from "./dto/response-event.dto";
 import { MongoObjectIdStringDto } from "src/common/dto/mongoObjectIdDto";
 import { CloneEventDto } from "./dto/clone-event.dto";
 import { InviteMemberDto } from "./dto/invite-member.dto";
+import { AcceptEventInviteDto } from "./dto/accept-event-invite.dto";
 
 @Controller("events")
 export class EventController {
@@ -181,14 +182,26 @@ export class EventController {
     return await this.eventService.sendInvite(params.id, session, dto);
   }
 
-  @ApiOperation({ summary: "Accept event invite" })
+  @ApiOperation({
+    summary: "Accept event invite",
+    parameters: [
+      { name: "id", in: "path", required: true, description: "Event ID" },
+      {
+        name: "calendarId",
+        in: "query",
+        required: true,
+        description: "Calendar ID to clone event to"
+      }
+    ]
+  })
   @Get("/invite/:id")
   async acceptInvite(
-    @Param() params: MongoObjectIdStringDto,
+    @Param() params: AcceptEventInviteDto,
     @Session() session: IUserSession
   ) {
     return await this.eventService.acceptInvite(
       params.id,
+      params.calendarId,
       session.user.id,
       session.user.email
     );

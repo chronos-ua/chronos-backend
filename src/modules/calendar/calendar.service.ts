@@ -276,6 +276,7 @@ export class CalendarService {
     if (!calendar) return false;
     const userObjectId = new Types.ObjectId(userId);
 
+    if (calendar.owner.equals(userObjectId)) return true;
     return calendar.members?.some(
       (member) =>
         member.status === ECalendarInviteStatus.ACCEPTED &&
