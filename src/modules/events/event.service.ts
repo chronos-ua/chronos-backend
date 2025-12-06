@@ -161,6 +161,10 @@ export class EventService {
 
     const userObjectId = new Types.ObjectId(userId);
 
+    if (!eventWithCalendar.isPrivate) {
+      return eventWithCalendar;
+    }
+
     if (!(<Calendar>(<unknown>eventWithCalendar.calendarId)).isPrivate) {
       return eventWithCalendar;
     }
