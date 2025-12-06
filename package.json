@@ -18,7 +18,7 @@
     "start:debug": "nest start --debug --watch --env-file=.env",
     "start:prod": "node --env-file=.env dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "dependencies": {
     "@google/genai": "^1.31.0",
