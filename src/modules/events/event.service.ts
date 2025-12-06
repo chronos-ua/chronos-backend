@@ -113,15 +113,10 @@ export class EventService {
       if (!targetCalendarId) {
         throw new ForbiddenException("Access denied to calendar");
       }
-      // Support mixed storage where `calendarId` in documents may be
-      // stored either as an ObjectId or as a plain string. Query for
-      // both forms to ensure we return matching events.
+
       return await this.eventModel
         .find({
-          $or: [
-            { calendarId: targetCalendarId },
-            { calendarId: targetCalendarId.toString() }
-          ]
+          calendarId: targetCalendarId
         })
         .lean()
         .exec();
@@ -129,7 +124,7 @@ export class EventService {
 
     return await this.eventModel
       .find({
-        calendarId: { $in: calendarIds }
+        creatorId: userObjectId
       })
       .lean()
       .exec();
