@@ -89,12 +89,12 @@ export class CalendarService {
     const userObjectId = new Types.ObjectId(userId);
 
     const calendar = await this.findById(calendarId, false, true);
-    if (!calendar) throw new NotFoundException();
+    if (!calendar) throw new NotFoundException("Calendar not found");
     if (
       !calendar.owner.equals(userObjectId) &&
       !calendar.members?.some((member) => member.user?.equals(userObjectId))
     ) {
-      throw new ForbiddenException();
+      throw new ForbiddenException("Access denied");
     }
 
     return calendar;
@@ -106,9 +106,9 @@ export class CalendarService {
     updateCalendarDto: UpdateCalendarDto
   ) {
     const calendar = await this.findById(calendarId, false, false);
-    if (!calendar) throw new NotFoundException();
+    if (!calendar) throw new NotFoundException("Calendar not found");
     if (!calendar.owner.equals(new Types.ObjectId(ownerId)))
-      throw new ForbiddenException();
+      throw new ForbiddenException("Only owner can update calendar");
     Object.assign(calendar, updateCalendarDto);
     return await calendar.save();
   }
@@ -127,16 +127,16 @@ export class CalendarService {
     currentOwnerId: string
   ) {
     const calendar = await this.findById(calendarId, false, false);
-    if (!calendar) throw new NotFoundException();
+    if (!calendar) throw new NotFoundException("Calendar not found");
     if (!calendar.owner.equals(new Types.ObjectId(currentOwnerId)))
-      throw new ForbiddenException();
+      throw new ForbiddenException("Only current owner can transfer ownership");
     calendar.owner = new Types.ObjectId(newOwnerId);
     await calendar.save();
   }
 
   async acceptInvite(calendarId: string, userId: string, userEmail: string) {
     const calendar = await this.findById(calendarId, true, false);
-    if (!calendar) throw new NotFoundException();
+    if (!calendar) throw new NotFoundException("Calendar not found");
     calendar.members ??= [];
     const user = new Types.ObjectId(userId);
 
@@ -149,12 +149,12 @@ export class CalendarService {
       return;
     }
 
-    throw new ForbiddenException();
+    throw new ForbiddenException("No pending invite found for this user");
   }
 
   async declineInvite(calendarId: string, userId: string, userEmail: string) {
     const calendar = await this.findById(calendarId, true, false);
-    if (!calendar) throw new NotFoundException();
+    if (!calendar) throw new NotFoundException("Calendar not found");
     calendar.members ??= [];
     const user = new Types.ObjectId(userId);
 
@@ -168,12 +168,12 @@ export class CalendarService {
       return;
     }
 
-    throw new NotFoundException();
+    throw new NotFoundException("No pending invite found for this user");
   }
 
   async leaveCalendar(calendarId: string, userId: string) {
     const calendar = await this.findById(calendarId, false, false);
-    if (!calendar) throw new NotFoundException();
+    if (!calendar) throw new NotFoundException("Calendar not found");
     calendar.members ??= [];
     const userObjectId = new Types.ObjectId(userId);
 
@@ -224,7 +224,8 @@ export class CalendarService {
       this.findById(calendarId, true, false),
       this.userModel.findById(new Types.ObjectId(userId))
     ]);
-    if (!calendar || !user) throw new NotFoundException();
+    if (!calendar || !user)
+      throw new NotFoundException("Calendar or user not found");
 
     user.subscriptions ??= [];
     if (user.subscriptions.some((sub) => sub.equals(calendar._id)))
@@ -241,7 +242,8 @@ export class CalendarService {
       this.findById(calendarId, true, false),
       this.userModel.findById(new Types.ObjectId(userId))
     ]);
-    if (!calendar || !user) throw new NotFoundException();
+    if (!calendar || !user)
+      throw new NotFoundException("Calendar or user not found");
 
     user.subscriptions ??= [];
     const index = user.subscriptions.findIndex((sub) =>
@@ -259,7 +261,7 @@ export class CalendarService {
       .lean()
       .populate("subscriptions")
       .exec();
-    if (!user) throw new NotFoundException();
+    if (!user) throw new NotFoundException("User not found");
 
     return user.subscriptions;
   }
