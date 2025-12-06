@@ -41,11 +41,16 @@ export class ChatGateway
     this.logger.log("ChatGateway initialized");
   }
 
-  handleConnection(@ConnectedSocket() client: Socket) {
+  handleConnection(
+    @ConnectedSocket() client: Socket,
+    @Session() session: IUserSession
+  ) {
+    this.chatService.handleJoin(session.user.id, client.id);
     DEV && this.logger.log(`Client connected: ${client.id}`);
   }
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
+    this.chatService.handleLeave(client.id);
     DEV && this.logger.log(`Client disconnected: ${client.id}`);
   }
 

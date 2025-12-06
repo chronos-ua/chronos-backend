@@ -6,6 +6,11 @@ import { ChatMessage, EChatContext } from "./schemas/chatMessage.schema";
 
 @Injectable()
 export class ChatService {
+  // userId -> socketId[]
+  private connectedUsers: Map<string, string[]> = new Map();
+  // socketId -> userId (reverse lookup)
+  private socketToUser: Map<string, string> = new Map();
+
   constructor(
     private readonly calendarService: CalendarService,
     @InjectModel("ChatMessage")
@@ -13,6 +18,33 @@ export class ChatService {
   ) {}
 
   private readonly logger = new Logger(ChatService.name);
+
+  handleJoin(userId: string, socketId: string) {
+    const existingSockets = this.connectedUsers.get(userId) || [];
+    existingSockets.push(socketId);
+    this.connectedUsers.set(userId, existingSockets);
+    this.socketToUser.set(socketId, userId);
+  }
+
+  handleLeave(socketId: string) {
+    const userId = this.socketToUser.get(socketId);
+    if (!userId) return;
+
+    this.socketToUser.delete(socketId);
+
+    const existingSockets = this.connectedUsers.get(userId) || [];
+    const updatedSockets = existingSockets.filter((id) => id !== socketId);
+    if (updatedSockets.length > 0) {
+      this.connectedUsers.set(userId, updatedSockets);
+    } else {
+      this.connectedUsers.delete(userId);
+    }
+  }
+
+  isConnected(userId: string): boolean {
+    return this.connectedUsers.has(userId);
+  }
+  isOnline = this.isConnected; // alias
 
   async handleMessage(
     contextId: string,
