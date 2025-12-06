@@ -1,3 +1,5 @@
+import { ICalendarWithId } from "src/modules/calendar/calendar.service";
+
 const EMAIL_TEMPLATES = {
   emailConfirmation: (confirmationLink: string) => {
     return `
@@ -41,7 +43,19 @@ const EMAIL_TEMPLATES = {
       <p>If you did not request this email, please ignore it.</p>
     `;
   },
-  calendarInvite: (calendar: { title: string }) => {
+  otp: (otp: string) => {
+    return `
+    <h1>Chronos</h1>
+    <br>
+    <p>Your One-Time Password (OTP) is:</p>
+    <h2>${otp}</h2>
+    <p>This OTP is valid for 5 minutes. If you did not request this, please ignore this email.</p>
+    `;
+  },
+
+  // notifications
+
+  calendarInvite: (calendar: ICalendarWithId) => {
     return `
       <h1>Chronos</h1>
       <br>
@@ -49,15 +63,6 @@ const EMAIL_TEMPLATES = {
       <p>Please log in to your Chronos account to accept or decline the invitation.</p>
       <br>
       <p>If you did not expect this invitation, please ignore this email.</p>
-    `;
-  },
-  otp: (otp: string) => {
-    return `
-      <h1>Chronos</h1>
-      <br>
-      <p>Your One-Time Password (OTP) is:</p>
-      <h2>${otp}</h2>
-      <p>This OTP is valid for 5 minutes. If you did not request this, please ignore this email.</p>
     `;
   }
 };

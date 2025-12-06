@@ -7,6 +7,7 @@ import {
 import nodemailer from "nodemailer";
 import { EMAIL_TEMPLATES } from "../consts/emailTemplates.js";
 import { Calendar } from "src/modules/calendar/schemas/calendar.schema.js";
+import { ICalendarWithId } from "src/modules/calendar/calendar.service.js";
 
 export const EMAIL_TRANSPORTER = Symbol("EMAIL_TRANSPORTER");
 
@@ -81,7 +82,7 @@ class EmailService {
     await this.send(mailOptions, this.sendMagicLink.name);
   }
 
-  public async sendCalendarInvite(email: string, calendar: Calendar) {
+  public async sendCalendarInvite(email: string, calendar: ICalendarWithId) {
     const mailOptions: nodemailer.SendMailOptions = {
       from: this.sender,
       to: email,
