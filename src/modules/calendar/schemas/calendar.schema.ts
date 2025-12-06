@@ -36,7 +36,7 @@ export class Calendar {
   @Prop({ default: "#4F46E5" })
   color: string;
 
-  @Prop({ default: false })
+  @Prop({ default: true })
   isPrivate: boolean;
 
   @Prop({ required: true, index: true, type: Types.ObjectId, ref: "User" })

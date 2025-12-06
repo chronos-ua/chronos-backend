@@ -90,6 +90,7 @@ export class CalendarService {
 
     const calendar = await this.findById(calendarId, false, true);
     if (!calendar) throw new NotFoundException("Calendar not found");
+    if (!calendar.isPrivate) return calendar;
     if (
       !calendar.owner.equals(userObjectId) &&
       !calendar.members?.some((member) => member.user?.equals(userObjectId))

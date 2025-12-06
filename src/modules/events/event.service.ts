@@ -71,7 +71,7 @@ export class EventService {
             member.user?.equals(userObjectId)
         ) ?? false;
 
-      return isOwner || isMember;
+      return isOwner || isMember || !calendar.isPrivate;
     } catch {
       return false;
     }
@@ -150,24 +150,26 @@ export class EventService {
   }
 
   async findOne(eventId: string, userId: string) {
-    const event = await this.findById(eventId, false, true);
-    if (!event) throw new NotFoundException("Event not found");
+    // const event = await this.findById(eventId, false, true);
+    const eventWithCalendar = await this.eventModel
+      .findById(new Types.ObjectId(eventId))
+      .populate("calendarId")
+      .lean()
+      .exec();
+
+    if (!eventWithCalendar) throw new NotFoundException("Event not found");
 
     const userObjectId = new Types.ObjectId(userId);
-    // Quick check: creator always has access
-    if (event.creatorId?.equals(userObjectId)) {
-      return event;
+
+    if (!(<Calendar>(<unknown>eventWithCalendar.calendarId)).isPrivate) {
+      return eventWithCalendar;
     }
 
-    const hasAccess = await this.hasCalendarAccess(
-      event.calendarId.toString(),
-      userId
-    );
-    if (!hasAccess) {
-      throw new ForbiddenException("Access denied to event");
+    if (eventWithCalendar.creatorId?.equals(userObjectId)) {
+      return eventWithCalendar;
     }
 
-    return event;
+    throw new ForbiddenException("Access denied to event");
   }
 
   async update(
@@ -264,8 +266,13 @@ export class EventService {
     endDate: Date,
     calendarId?: string
   ) {
-    const calendars = await this.calendarService.getUserCalendars(userId);
-    const calendarIds = calendars.map((cal) => cal._id);
+    let userCalendars: (Calendar & { _id: Types.ObjectId })[] = [];
+    if (calendarId)
+      userCalendars[0] = await this.calendarService.findOne(calendarId, userId);
+    if (!userCalendars[0])
+      userCalendars = await this.calendarService.getUserCalendars(userId);
+
+    const calendarIds = userCalendars.map((cal) => cal._id);
 
     if (calendarId) {
       const targetCalendarId = calendarIds.find(
