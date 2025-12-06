@@ -63,6 +63,7 @@ export class ChatGateway
     @Session() session: IUserSession
   ) {
     if (
+      typeof payload !== "object" ||
       !payload.room ||
       typeof payload.room !== "string" ||
       payload.room.length !== 24
