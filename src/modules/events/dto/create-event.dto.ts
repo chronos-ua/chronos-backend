@@ -38,11 +38,11 @@ export class CreateEventDto {
   type: EEventType = EEventType.ARRANGEMENT;
 
   @ApiProperty()
-  @IsDateString()
+  @IsDate()
   start: Date;
 
   @ApiProperty()
-  @IsDateString()
+  @IsDate()
   end: Date;
 
   @ApiProperty()
