@@ -17,6 +17,7 @@ import type { IUserSession } from "../auth/auth.interfaces";
 import { ApiOkResponse, ApiOperation, ApiQuery } from "@nestjs/swagger";
 import { Event } from "./schemas/event.schema";
 import { ResponseEventDto } from "./dto/response-event.dto";
+import { MongoObjectIdStringDto } from "src/common/dto/mongoObjectIdDto";
 
 @Controller("events")
 export class EventController {
@@ -56,13 +57,13 @@ export class EventController {
     isArray: true
   })
   @ApiOperation({ summary: "Get events by calendar ID" })
-  @Get("calendar/:calendarId")
+  @Get("calendar/:id")
   async getEventsByCalendar(
-    @Param("calendarId") calendarId: string,
+    @Param() params: MongoObjectIdStringDto,
     @Session() session: IUserSession
   ) {
     return await this.eventService.getEventsByCalendar(
-      calendarId,
+      params.id,
       session.user.id
     );
   }

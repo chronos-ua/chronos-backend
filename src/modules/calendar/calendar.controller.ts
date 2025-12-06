@@ -74,8 +74,13 @@ export class CalendarController {
     return this.calendarService.remove(params.id, session.user.id);
   }
 
-  @ApiOperation({ summary: "Send calendar invite" })
-  @Post("invite/:calendarId")
+  @ApiOperation({
+    summary: "Send calendar invite",
+    parameters: [
+      { name: "id", in: "path", required: true, description: "Calendar ID" }
+    ]
+  })
+  @Post("invite/:id")
   async sendInvite(
     @Param() params: MongoObjectIdStringDto,
     @Body() dto: InviteMemberDto,
