@@ -156,7 +156,7 @@ export class CalendarController {
   }
 
   @ApiOperation({ summary: "Transfer calendar ownership to another user" })
-  @Post("/transfer-ownership/:calendarId/:newOwnerId")
+  @Patch("/transfer-ownership/:calendarId/:newOwnerId")
   async transferOwnership(
     @Param() params: TransferOwnershipParamsDto,
     @Session() session: IUserSession
