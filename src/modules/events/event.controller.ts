@@ -119,7 +119,7 @@ export class EventController {
   }
 
   @ApiOkResponse({
-    description: "List of user events",
+    description: "Event details",
     type: ResponseEventDto
   })
   @ApiOperation({ summary: "Get event by ID" })
