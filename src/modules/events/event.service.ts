@@ -176,6 +176,43 @@ export class EventService {
     throw new ForbiddenException("Access denied to event");
   }
 
+  async cloneEventToCalendar(
+    eventId: string,
+    targetCalendarId: string,
+    userId: string
+  ) {
+    const event = await this.eventModel
+      .findById(new Types.ObjectId(eventId))
+      .populate("calendarId")
+      .lean()
+      .exec();
+    if (!event) throw new NotFoundException("Event not found");
+    const isPublicEvent = !event.isPrivate;
+    const isPublicCalendar = !(<Calendar>(<unknown>event.calendarId)).isPrivate;
+    if (!isPublicEvent && !isPublicCalendar) {
+      throw new ForbiddenException("Cannot clone private event");
+    }
+    const canEditTargetCalendar = await this.canEditCalendar(
+      targetCalendarId,
+      userId
+    );
+
+    if (!canEditTargetCalendar) {
+      throw new ForbiddenException(
+        "No permission to add event to target calendar"
+      );
+    }
+
+    const clone = {
+      ...event,
+      calendarId: new Types.ObjectId(targetCalendarId),
+      creatorId: new Types.ObjectId(userId)
+    };
+    delete (<any>clone)._id;
+
+    return await this.eventModel.create(clone);
+  }
+
   async update(
     userId: string,
     eventId: string,

@@ -18,6 +18,7 @@ import { ApiOkResponse, ApiOperation, ApiQuery } from "@nestjs/swagger";
 import { Event } from "./schemas/event.schema";
 import { ResponseEventDto } from "./dto/response-event.dto";
 import { MongoObjectIdStringDto } from "src/common/dto/mongoObjectIdDto";
+import { CloneEventDto } from "./dto/clone-event.dto";
 
 @Controller("events")
 export class EventController {
@@ -129,6 +130,19 @@ export class EventController {
     @Session() session: IUserSession
   ) {
     return await this.eventService.findOne(eventId, session.user.id);
+  }
+
+  @ApiOperation({ summary: "Clone event to another calendar" })
+  @Post(":eventId/clone/:targetCalendarId")
+  async cloneEventToCalendar(
+    @Param() params: CloneEventDto,
+    @Session() session: IUserSession
+  ) {
+    return await this.eventService.cloneEventToCalendar(
+      params.eventId,
+      params.targetCalendarId,
+      session.user.id
+    );
   }
 
   @ApiOperation({ summary: "Update event by ID" })
