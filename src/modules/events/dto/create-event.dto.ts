@@ -1,7 +1,7 @@
 import { Transform } from "class-transformer";
 import {
   IsBoolean,
-  IsDate,
+  IsDateString,
   IsEnum,
   IsOptional,
   IsString,
@@ -44,11 +44,11 @@ export class CreateEventDto {
   type: EEventType = EEventType.ARRANGEMENT;
 
   @ApiProperty()
-  @IsDate()
+  @IsDateString()
   start: Date;
 
   @ApiProperty()
-  @IsDate()
+  @IsDateString()
   end: Date;
 
   @ApiProperty()
