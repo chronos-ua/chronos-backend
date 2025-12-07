@@ -28,6 +28,9 @@ interface ReminderQueueItem {
   timeoutId?: NodeJS.Timeout;
 }
 
+// Peak production shitcode
+// Probably needs a total rewrite to the event emitters
+
 @Injectable()
 export class NotificationService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(NotificationService.name);
