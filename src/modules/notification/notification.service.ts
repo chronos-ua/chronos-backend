@@ -14,6 +14,8 @@ import { Notification } from "./schemas/notification.schema";
 import { User } from "../users/schemas/user.schema";
 import { DEV } from "src/common/consts/env";
 import { Event, EReminderMethod } from "../events/schemas/event.schema";
+import { OnEvent } from "@nestjs/event-emitter";
+import { Calendar } from "../calendar/schemas/calendar.schema";
 
 interface ReminderQueueItem {
   eventId: string;
@@ -292,6 +294,12 @@ export class NotificationService implements OnModuleInit, OnModuleDestroy {
       title: string;
       message?: string;
       url?: string;
+    },
+    skipFlags?: {
+      ws?: boolean;
+      sse?: boolean;
+      push?: boolean;
+      email?: boolean;
     }
   ) {
     // Priority 1: WS
@@ -368,6 +376,66 @@ export class NotificationService implements OnModuleInit, OnModuleDestroy {
         this.logger.warn(
           `No notification channel available for user ${userId}`
         );
+    }
+  }
+
+  @OnEvent("event.invite.sent")
+  async handleEventInvite(payload: {
+    eventId: string;
+    eventTitle: string;
+    inviteeEmail: string;
+    inviteeName?: string;
+  }) {
+    try {
+      const user = await this.userModel
+        .findOne({ email: payload.inviteeEmail })
+        .lean()
+        .exec();
+
+      if (user) {
+        await this.sendNotification(user._id.toString(), {
+          title: "Event Invitation",
+          message: `You've been invited to: ${payload.eventTitle}`,
+          url: `/events/${payload.eventId}`
+        });
+      }
+
+      DEV &&
+        this.logger.log(
+          `Event invite notification sent to ${payload.inviteeEmail}`
+        );
+    } catch (error) {
+      this.logger.error("Failed to send event invite notification", error);
+    }
+  }
+
+  @OnEvent("calendar.invite.sent")
+  async handleCalendarInvite(payload: {
+    calendarId: string;
+    calendarTitle: string;
+    inviteeEmail: string;
+    inviteeName?: string;
+  }) {
+    try {
+      const user = await this.userModel
+        .findOne({ email: payload.inviteeEmail })
+        .lean()
+        .exec();
+
+      if (user) {
+        await this.sendNotification(user._id.toString(), {
+          title: "Calendar Invitation",
+          message: `You've been invited to calendar: ${payload.calendarTitle}`,
+          url: `/calendars/${payload.calendarId}`
+        });
+      }
+
+      DEV &&
+        this.logger.log(
+          `Calendar invite notification sent to ${payload.inviteeEmail}`
+        );
+    } catch (error) {
+      this.logger.error("Failed to send calendar invite notification", error);
     }
   }
 }

@@ -24,6 +24,7 @@
     "@google/genai": "^1.31.0",
     "@nestjs/common": "^11.1.9",
     "@nestjs/core": "^11.1.9",
+    "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/mapped-types": "*",
     "@nestjs/mongoose": "^11.0.3",
     "@nestjs/platform-express": "^11.1.9",

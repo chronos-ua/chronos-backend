@@ -18,6 +18,7 @@ import {
 import { IUserSession } from "../auth/auth.interfaces";
 import { EmailService } from "src/common/email/email.service";
 import { NotificationService } from "../notification/notification.service";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 @Injectable()
 export class EventService {
@@ -26,7 +27,8 @@ export class EventService {
     private readonly calendarService: CalendarService,
     @InjectModel("User") private userModel: Model<any>,
     private readonly emailService: EmailService,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
+    private readonly eventEmitter: EventEmitter2
   ) {}
 
   // TODO: contribute fix to mongoose typings
@@ -399,6 +401,14 @@ export class EventService {
       // user?.preferences.emailNotifications &&
       this.emailService.sendEventInvite(dto.email, event);
     await Promise.all([event.save(), email]);
+
+    // Emit event for notification
+    this.eventEmitter.emit("event.invite.sent", {
+      eventId: event._id.toString(),
+      eventTitle: event.title,
+      inviteeEmail: dto.email,
+      inviteeName: user?.name
+    });
   }
 
   async acceptInvite(

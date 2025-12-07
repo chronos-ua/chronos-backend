@@ -16,6 +16,7 @@ import { IUserSession } from "../auth/auth.interfaces";
 import { InviteCalendarMemberDto } from "./dto/invite-calendar-member.dto";
 import { User } from "../users/schemas/user.schema";
 import { EmailService } from "src/common/email/email.service";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 export type ICalendarWithId = Calendar & {
   _id: Types.ObjectId;
@@ -26,7 +27,8 @@ export class CalendarService {
   constructor(
     @InjectModel("Calendar") private calendarModel: Model<Calendar>,
     @InjectModel("User") private userModel: Model<User>,
-    private readonly emailService: EmailService
+    private readonly emailService: EmailService,
+    private readonly eventEmitter: EventEmitter2
   ) {}
 
   // TODO: contribute fix to mongoose typings
@@ -222,6 +224,14 @@ export class CalendarService {
       user?.preferences.emailNotifications &&
       this.emailService.sendCalendarInvite(dto.email, calendar);
     await Promise.all([calendar.save(), email]);
+
+    // Emit event for notification
+    this.eventEmitter.emit("calendar.invite.sent", {
+      calendarId: calendar._id.toString(),
+      calendarTitle: calendar.title,
+      inviteeEmail: dto.email,
+      inviteeName: user?.name
+    });
   }
 
   async subscribeCalendar(calendarId: string, userId: string) {

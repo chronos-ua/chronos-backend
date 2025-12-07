@@ -20,9 +20,11 @@ import { AiModule } from "./common/ai/ai.module";
 import { NotificationModule } from "./modules/notification/notification.module";
 import { DEV } from "./common/consts/env";
 import { HolidaysModule } from "./modules/holidays/holidays.module";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     MongooseModule.forRoot("mongodb://localhost/nest", {}),
     AuthModule.forRootAsync({
       imports: [MongooseModule, RedisModule, EmailModule, CalendarModule],
