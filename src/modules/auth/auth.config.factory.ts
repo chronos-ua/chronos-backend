@@ -126,7 +126,8 @@ export function createAuth(
           }
         }
       }),
-      oneTap()
+      oneTap(),
+      haveIBeenPwned({})
     ]
   });
 }
