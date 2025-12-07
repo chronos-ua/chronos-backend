@@ -97,25 +97,34 @@ export class ChatService {
     contextId: string,
     contextType: EChatContext,
     userId: string
-  ): Promise<ChatMessage[]> {
+  ) {
     if (!(await this.isAllowedToAccess(contextId, contextType, userId))) {
       throw new Error("Access denied to chat messages for this context.");
     }
+
+    const contextObjectId = Types.ObjectId.isValid(contextId)
+      ? new Types.ObjectId(contextId)
+      : null;
+
     const messages = await this.chatMessageModel
       .find({
-        contextId: new Types.ObjectId(contextId)
-        // TODO: miltiple context types
-        // contextType: contextType
+        contextType,
+        ...(contextObjectId
+          ? { $or: [{ contextId: contextObjectId }, { contextId }] }
+          : { contextId })
       })
       .sort({ createdAt: 1 })
+      .populate({ path: "senderId", select: "name" })
       .lean()
       .exec();
 
     this.chatMessageModel
       .updateMany(
         {
-          contextId: new Types.ObjectId(contextId),
-          contextType: contextType,
+          contextType,
+          ...(contextObjectId
+            ? { $or: [{ contextId: contextObjectId }, { contextId }] }
+            : { contextId }),
           readBy: { $ne: new Types.ObjectId(userId) }
         },
         {
@@ -127,7 +136,17 @@ export class ChatService {
         this.logger.error(`Failed to mark messages as read: ${e.message}`);
       });
 
-    return messages;
+    return messages.map((m) => {
+      const senderDoc = (m as any)?.senderId;
+      const senderId =
+        (senderDoc?._id ?? senderDoc?.id ?? senderDoc)?.toString?.() ?? "";
+      const senderName = senderDoc?.name ?? "";
+
+      return {
+        sender: { id: senderId, name: senderName },
+        message: m.content
+      };
+    });
   }
 
   public async isAllowedToAccess(
