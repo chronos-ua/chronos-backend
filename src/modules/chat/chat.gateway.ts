@@ -34,10 +34,14 @@ import { DEV } from "src/common/consts/env";
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
+  @WebSocketServer()
+  server: Server;
+
   constructor(private readonly chatService: ChatService) {}
   private readonly logger = new Logger(ChatGateway.name);
 
   afterInit(server: Server) {
+    this.chatService.setServer(server);
     this.logger.log("ChatGateway initialized");
   }
 

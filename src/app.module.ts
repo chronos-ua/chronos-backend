@@ -17,6 +17,7 @@ import { EventModule } from "./modules/events/event.module";
 import { CalendarService } from "./modules/calendar/calendar.service";
 import { ChatModule } from "./modules/chat/chat.module";
 import { AiModule } from "./common/ai/ai.module";
+import { NotificationModule } from "./modules/notification/notification.module";
 import { DEV } from "./common/consts/env";
 
 @Module({
@@ -53,7 +54,8 @@ import { DEV } from "./common/consts/env";
     UsersModule,
     EventModule,
     ChatModule,
-    AiModule
+    AiModule,
+    NotificationModule
   ],
   controllers: [AppController],
   providers: [AppService]

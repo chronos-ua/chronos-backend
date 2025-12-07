@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Test Push Notifications</title>
+    <style>
+      body {
+        max-width: 600px;
+        margin: 50px auto;
+        font-size: 16px;
+      }
+      button {
+        padding: 20px;
+        margin: 10px;
+      }
+      #status {
+        margin: 10px;
+        padding: 10px;
+        background: gray;
+      }
+      .success {
+        color: green;
+      }
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Web Push Test</h1>
+    <button id="subscribe">Subscribe to Push</button>
+    <button id="unsubscribe">Unsubscribe</button>
+    <button id="sendTest">Send Test Notification</button>
+    <div id="status"></div>
+
+    <script>
+      const API_URL = "http://localhost:3000/api";
+      const status = document.getElementById("status");
+
+      function log(msg, isError = false) {
+        const p = document.createElement("p");
+        p.textContent = msg;
+        p.className = isError ? "error" : "success";
+        status.appendChild(p);
+        console.log(msg);
+      }
+
+      function urlBase64ToUint8Array(base64String) {
+        try {
+          // iit was complaining about padding
+          base64String = base64String.trim().replace(/=+$/, "");
+          const base64 = base64String.replace(/-/g, "+").replace(/_/g, "/");
+          const padding = "=".repeat((4 - (base64.length % 4)) % 4);
+          const paddedBase64 = base64 + padding;
+
+          const rawData = window.atob(paddedBase64);
+          const outputArray = new Uint8Array(rawData.length);
+          for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+          }
+          console.log(
+            "Conversion successful, array length:",
+            outputArray.length
+          );
+          return outputArray;
+        } catch (error) {
+          console.error("Conversion error:", error);
+          throw new Error("Failed to convert VAPID key: " + error.message);
+        }
+      }
+
+      document
+        .getElementById("subscribe")
+        .addEventListener("click", async () => {
+          try {
+            // Get VAPID public key
+            const keyResponse = await fetch(
+              `${API_URL}/notifications/vapid-public-key`,
+              {
+                credentials: "include"
+              }
+            );
+            const { publicKey } = await keyResponse.json();
+
+            if (!publicKey) {
+              throw new Error("No VAPID public key configured");
+            }
+
+            log("Public key received: " + publicKey);
+            log("Public key length: " + publicKey.length);
+
+            log("Requesting notification permission...");
+            const permission = await Notification.requestPermission();
+
+            if (permission !== "granted") {
+              throw new Error("Notification permission denied");
+            }
+
+            log("Registering service worker...");
+            const registration =
+              await navigator.serviceWorker.register("/sw.js");
+            await navigator.serviceWorker.ready;
+
+            log("Subscribing to push...");
+            const convertedKey = urlBase64ToUint8Array(publicKey);
+            log("Converted key length: " + convertedKey.length);
+
+            const subscription = await registration.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: convertedKey
+            });
+
+            log("Sending subscription to server...");
+            const response = await fetch(
+              `${API_URL}/notifications/push/subscribe`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(subscription)
+              }
+            );
+
+            if (!response.ok) throw new Error("Failed to subscribe on server");
+
+            log("Successfully subscribed! You can close this tab now.");
+            log("Endpoint: " + subscription.endpoint);
+          } catch (error) {
+            log("Error: " + error.message, true);
+          }
+        });
+
+      document
+        .getElementById("unsubscribe")
+        .addEventListener("click", async () => {
+          try {
+            const registration = await navigator.serviceWorker.ready;
+            const subscription =
+              await registration.pushManager.getSubscription();
+
+            if (!subscription) {
+              log("No active subscription", true);
+              return;
+            }
+
+            await fetch(`${API_URL}/notifications/push/unsubscribe`, {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({ endpoint: subscription.endpoint })
+            });
+
+            await subscription.unsubscribe();
+            log("Unsubscribed successfully");
+          } catch (error) {
+            log("Error: " + error.message, true);
+          }
+        });
+
+      document
+        .getElementById("sendTest")
+        .addEventListener("click", async () => {
+          try {
+            log("Sending test notification...");
+            const response = await fetch(`${API_URL}/notifications/test/send`, {
+              method: "POST",
+              credentials: "include"
+            });
+
+            if (!response.ok) throw new Error("Failed to send notification");
+
+            const result = await response.json();
+            log(result.message);
+            log("Close this tab and wait for the notification!");
+          } catch (error) {
+            log("Error: " + error.message, true);
+          }
+        });
+    </script>
+  </body>
+</html>

@@ -8,6 +8,8 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { SwaggerTheme, SwaggerThemeNameEnum } from "swagger-themes";
 import { IoAdapter } from "@nestjs/platform-socket.io";
 import { DEV } from "./common/consts/env";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import * as path from "path";
 
 async function bootstrap() {
   const logger = new Logger("Bootstrap");
@@ -24,11 +26,17 @@ async function bootstrap() {
   // const expressApp = express();
   // const adapter = new ExpressAdapter(expressApp) as AbstractHttpAdapter;
 
-  const app = await NestFactory.create(
+  const app = await NestFactory.create<NestExpressApplication>(
     AppModule,
     // adapter,
     NestOptions
   );
+
+  if (DEV) {
+    app.useStaticAssets(path.join(__dirname, ".."), {
+      prefix: "/"
+    });
+  }
 
   app.setGlobalPrefix("api");
 

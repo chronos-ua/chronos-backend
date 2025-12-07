@@ -3,6 +3,7 @@ import { CalendarService } from "../calendar/calendar.service";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { ChatMessage, EChatContext } from "./schemas/chatMessage.schema";
+import { DEV } from "src/common/consts/env";
 
 @Injectable()
 export class ChatService {
@@ -10,6 +11,7 @@ export class ChatService {
   private connectedUsers: Map<string, string[]> = new Map();
   // socketId -> userId (reverse lookup)
   private socketToUser: Map<string, string> = new Map();
+  private server: any;
 
   constructor(
     private readonly calendarService: CalendarService,
@@ -18,6 +20,10 @@ export class ChatService {
   ) {}
 
   private readonly logger = new Logger(ChatService.name);
+
+  setServer(server: any) {
+    this.server = server;
+  }
 
   handleJoin(userId: string, socketId: string) {
     const existingSockets = this.connectedUsers.get(userId) || [];
@@ -133,5 +139,27 @@ export class ChatService {
       default:
         return false;
     }
+  }
+
+  public sendNotification(
+    userId: string,
+    notification: {
+      title: string;
+      message?: string;
+      url?: string;
+    }
+  ): boolean {
+    const socketIds = this.connectedUsers.get(userId);
+    if (socketIds && socketIds.length > 0 && this.server) {
+      for (const socketId of socketIds) {
+        this.server.to(socketId).emit("notification", notification);
+        DEV &&
+          this.logger.log(
+            `Sent notification to user ${userId} on socket ${socketId}: ${notification.title}`
+          );
+      }
+      return true;
+    }
+    return false;
   }
 }
