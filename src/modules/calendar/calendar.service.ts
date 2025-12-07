@@ -221,7 +221,7 @@ export class CalendarService {
     calendar.members.push(member);
 
     const email =
-      user?.preferences.emailNotifications &&
+      // user?.preferences.emailNotifications &&
       this.emailService.sendCalendarInvite(dto.email, calendar);
     await Promise.all([calendar.save(), email]);
 
