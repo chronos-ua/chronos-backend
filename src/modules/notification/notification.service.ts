@@ -398,11 +398,15 @@ export class NotificationService implements OnModuleInit, OnModuleDestroy {
         .exec();
 
       if (user) {
-        await this.sendNotification(user._id.toString(), {
-          title: "Event Invitation",
-          message: `You've been invited to: ${payload.eventTitle}`,
-          url: `/events/${payload.eventId}`
-        });
+        await this.sendNotification(
+          user._id.toString(),
+          {
+            title: "Event Invitation",
+            message: `You've been invited to: ${payload.eventTitle}`,
+            url: `/events/${payload.eventId}`
+          },
+          { email: true }
+        );
       }
 
       DEV &&
@@ -428,11 +432,15 @@ export class NotificationService implements OnModuleInit, OnModuleDestroy {
         .exec();
 
       if (user) {
-        await this.sendNotification(user._id.toString(), {
-          title: "Calendar Invitation",
-          message: `You've been invited to calendar: ${payload.calendarTitle}`,
-          url: `/calendars/${payload.calendarId}`
-        });
+        await this.sendNotification(
+          user._id.toString(),
+          {
+            title: "Calendar Invitation",
+            message: `You've been invited to calendar: ${payload.calendarTitle}`,
+            url: `/calendars/${payload.calendarId}`
+          },
+          { email: true }
+        );
       }
 
       DEV &&
