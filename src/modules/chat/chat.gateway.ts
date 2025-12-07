@@ -145,7 +145,7 @@ export class ChatGateway
   }
 
   @SubscribeMessage("message")
-  handleRoomMessage(
+  async handleRoomMessage(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: { room: string; message: string },
     @Session() session?: IUserSession
@@ -171,6 +171,13 @@ export class ChatGateway
       },
       message: payload.message
     });
+
+    await this.chatService.handleMessage(
+      payload.room,
+      EChatContext.CALENDAR,
+      session.user.id,
+      payload.message
+    );
 
     DEV &&
       this.logger.log(
