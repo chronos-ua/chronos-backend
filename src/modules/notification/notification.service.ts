@@ -31,6 +31,10 @@ interface ReminderQueueItem {
 // Peak production shitcode
 // Probably needs a total rewrite to the event emitters
 
+// TODO:
+// - Throttle email reminders to avoid spamming
+// - Batching
+
 @Injectable()
 export class NotificationService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(NotificationService.name);
