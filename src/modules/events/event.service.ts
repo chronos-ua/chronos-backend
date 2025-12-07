@@ -17,6 +17,7 @@ import {
 } from "../calendar/schemas/calendar.schema";
 import { IUserSession } from "../auth/auth.interfaces";
 import { EmailService } from "src/common/email/email.service";
+import { NotificationService } from "../notification/notification.service";
 
 @Injectable()
 export class EventService {
@@ -24,7 +25,8 @@ export class EventService {
     @InjectModel("Event") private eventModel: Model<Event>,
     private readonly calendarService: CalendarService,
     @InjectModel("User") private userModel: Model<any>,
-    private readonly emailService: EmailService
+    private readonly emailService: EmailService,
+    private readonly notificationService: NotificationService
   ) {}
 
   // TODO: contribute fix to mongoose typings
@@ -163,9 +165,9 @@ export class EventService {
       creatorId: new Types.ObjectId(userId)
     });
 
-    // TODO: implement notifications - send event creation notifications to cal members
-    // TODO: implement notifications - schedule reminder notifications based on reminders array
-    // TODO: notification service itself, lol
+    if (event.reminders && event.reminders.length > 0) {
+      this.notificationService.scheduleEventReminders(event);
+    }
 
     return event;
   }
@@ -280,8 +282,16 @@ export class EventService {
     Object.assign(event, updateEventDto);
     const updatedEvent = await event.save();
 
-    // TODO: implement notifications - send event update notifications to calendar members
-    // TODO: implement notifications - update scheduled reminder notifications
+    if (
+      updateEventDto.reminders ||
+      updateEventDto.start ||
+      updateEventDto.end
+    ) {
+      this.notificationService.cancelEventReminders(eventId);
+      if (updatedEvent.reminders && updatedEvent.reminders.length > 0) {
+        this.notificationService.scheduleEventReminders(updatedEvent);
+      }
+    }
 
     return updatedEvent;
   }
@@ -303,8 +313,7 @@ export class EventService {
 
     await event.deleteOne();
 
-    // TODO: implement notifications - send event deletion notifications to calendar members
-    // TODO: implement notifications - cancel scheduled reminder notifications
+    this.notificationService.cancelEventReminders(eventId);
   }
 
   async getEventsByCalendar(calendarId: string, userId: string) {

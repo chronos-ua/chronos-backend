@@ -106,7 +106,8 @@ class EmailService {
         `${process.env.BASE_URL}/events/${event._id}`
       )
     };
-    await this.send(mailOptions, this.sendEventInvite.name);
+    const status = await this.send(mailOptions, this.sendEventInvite.name);
+    console.log("\n\n\n EMAIL STATUS:", status, "\n\n\n");
   }
 
   public async sendOTP(email: string, otp: string) {

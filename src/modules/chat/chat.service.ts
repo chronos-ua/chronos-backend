@@ -4,6 +4,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { ChatMessage, EChatContext } from "./schemas/chatMessage.schema";
 import { DEV } from "src/common/consts/env";
+import { NotificationService } from "../notification/notification.service";
 
 @Injectable()
 export class ChatService {
@@ -17,6 +18,7 @@ export class ChatService {
     private readonly calendarService: CalendarService,
     @InjectModel("ChatMessage")
     private readonly chatMessageModel: Model<ChatMessage>
+    // private readonly notificationService: NotificationService
   ) {}
 
   private readonly logger = new Logger(ChatService.name);

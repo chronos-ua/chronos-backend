@@ -5,6 +5,7 @@ import { CalendarModule } from "../calendar/calendar.module";
 import { ChatGateway } from "./chat.gateway";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ChatMessageSchema } from "./schemas/chatMessage.schema";
+import { NotificationModule } from "../notification/notification.module";
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ChatMessageSchema } from "./schemas/chatMessage.schema";
     MongooseModule.forFeature([
       { name: "ChatMessage", schema: ChatMessageSchema }
     ])
+    // NotificationModule
   ],
   controllers: [ChatController],
   providers: [ChatService, ChatGateway],

@@ -8,6 +8,7 @@ import { EmailModule } from "src/common/email/email.module";
 import { ChatModule } from "../chat/chat.module";
 import { NotificationSchema } from "./schemas/notification.schema";
 import { UserSchema } from "../users/schemas/user.schema";
+import { EventSchema } from "../events/schemas/event.schema";
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { UserSchema } from "../users/schemas/user.schema";
     ChatModule,
     MongooseModule.forFeature([
       { name: "Notification", schema: NotificationSchema },
-      { name: "User", schema: UserSchema }
+      { name: "User", schema: UserSchema },
+      { name: "Event", schema: EventSchema }
     ])
   ],
   controllers: [NotificationController],
