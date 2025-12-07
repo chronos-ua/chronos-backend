@@ -141,7 +141,7 @@ class EmailService {
       this.logger.error(
         `Error in ${caller} while sending email to ${opt.to}: ${error}`
       );
-      throw new InternalServerErrorException(`Failed to send email`);
+      // throw new InternalServerErrorException(`Failed to send email`);
     }
   }
 
