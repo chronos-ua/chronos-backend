@@ -1,9 +1,9 @@
 import { IsEmail, IsEnum, IsString, Length } from "class-validator";
+import { ECalendarRole } from "../schemas/calendar.schema";
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { EEventRole } from "../schemas/event.schema";
 
-export class InviteMemberDto {
+export class InviteCalendarMemberDto {
   @ApiProperty()
   @IsEmail()
   @Transform(({ value }) => value?.toLowerCase().trim())
@@ -11,8 +11,8 @@ export class InviteMemberDto {
   @IsString()
   email: string;
 
-  @ApiProperty({ enum: EEventRole })
-  @IsEnum(EEventRole)
+  @ApiProperty({ enum: ECalendarRole })
+  @IsEnum(ECalendarRole)
   @IsString()
-  role: EEventRole;
+  role: ECalendarRole;
 }

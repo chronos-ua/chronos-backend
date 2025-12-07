@@ -13,7 +13,7 @@ import {
   ECalendarRole
 } from "./schemas/calendar.schema";
 import { IUserSession } from "../auth/auth.interfaces";
-import { InviteMemberDto } from "./dto/invite-member.dto";
+import { InviteCalendarMemberDto } from "./dto/invite-calendar-member.dto";
 import { User } from "../users/schemas/user.schema";
 import { EmailService } from "src/common/email/email.service";
 
@@ -194,7 +194,7 @@ export class CalendarService {
   async sendInvite(
     calendarId: string,
     sender: IUserSession,
-    dto: InviteMemberDto
+    dto: InviteCalendarMemberDto
   ) {
     if (sender.user.email === dto.email)
       throw new ForbiddenException("Cannot invite yourself");

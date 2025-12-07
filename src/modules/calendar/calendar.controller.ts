@@ -16,7 +16,7 @@ import { CreateCalendarDto } from "./dto/create-calendar.dto";
 import { UpdateCalendarDto } from "./dto/update-calendar.dto";
 import { Session } from "@thallesp/nestjs-better-auth";
 import { ApiOperation } from "@nestjs/swagger";
-import { InviteMemberDto } from "./dto/invite-member.dto";
+import { InviteCalendarMemberDto } from "./dto/invite-calendar-member.dto";
 import { MongoObjectIdStringDto } from "src/common/dto/mongoObjectIdDto";
 import { TransferOwnershipParamsDto } from "./dto/transfer-ownership-params.dto";
 
@@ -83,7 +83,7 @@ export class CalendarController {
   @Post("invite/:id")
   async sendInvite(
     @Param() params: MongoObjectIdStringDto,
-    @Body() dto: InviteMemberDto,
+    @Body() dto: InviteCalendarMemberDto,
     @Session() session: IUserSession
   ) {
     return await this.calendarService.sendInvite(params.id, session, dto);

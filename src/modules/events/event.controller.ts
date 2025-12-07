@@ -19,7 +19,7 @@ import { Event } from "./schemas/event.schema";
 import { ResponseEventDto } from "./dto/response-event.dto";
 import { MongoObjectIdStringDto } from "src/common/dto/mongoObjectIdDto";
 import { CloneEventDto } from "./dto/clone-event.dto";
-import { InviteMemberDto } from "./dto/invite-member.dto";
+import { InviteEventMemberDto } from "./dto/invite-event-member.dto";
 import { AcceptEventInviteDto } from "./dto/accept-event-invite.dto";
 
 @Controller("events")
@@ -189,7 +189,7 @@ export class EventController {
   @Post("invite/:id")
   async sendInvite(
     @Param() params: MongoObjectIdStringDto,
-    @Body() dto: InviteMemberDto,
+    @Body() dto: InviteEventMemberDto,
     @Session() session: IUserSession
   ) {
     return await this.eventService.sendInvite(params.id, session, dto);
