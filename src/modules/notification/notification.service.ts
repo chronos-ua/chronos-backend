@@ -295,15 +295,17 @@ export class NotificationService implements OnModuleInit, OnModuleDestroy {
       message?: string;
       url?: string;
     },
-    skipFlags?: {
+    skipFlags: {
       ws?: boolean;
       sse?: boolean;
       push?: boolean;
       email?: boolean;
-    }
+    } = {}
   ) {
     // Priority 1: WS
-    let isSent = this.socketService.sendNotification(userId, notification);
+    let isSent =
+      !skipFlags.ws &&
+      this.socketService.sendNotification(userId, notification);
 
     if (isSent) {
       DEV && this.logger.log(`Sent via WS to ${userId}`);
@@ -316,10 +318,13 @@ export class NotificationService implements OnModuleInit, OnModuleDestroy {
       return isSent;
     }
 
-    const hasSSE = this.sseService.hasSubscription(userId);
+    const hasSSE = !skipFlags.sse && this.sseService.hasSubscription(userId);
     const hasPushSubs =
-      user.pushSubscriptions && user.pushSubscriptions.length > 0;
-    const emailEnabled = user.email && user.preferences?.emailNotifications;
+      !skipFlags.push &&
+      user.pushSubscriptions &&
+      user.pushSubscriptions.length > 0;
+    const emailEnabled =
+      !skipFlags.email && user.email && user.preferences?.emailNotifications;
 
     // SSE fallback
 
