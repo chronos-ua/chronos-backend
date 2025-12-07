@@ -386,7 +386,7 @@ export class EventService {
     event.members.push(member);
 
     const email =
-      user?.preferences.emailNotifications &&
+      // user?.preferences.emailNotifications &&
       this.emailService.sendEventInvite(dto.email, event);
     await Promise.all([event.save(), email]);
   }
