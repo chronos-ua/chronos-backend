@@ -19,8 +19,10 @@ import {
   AuthGuard,
   Session
 } from "@thallesp/nestjs-better-auth";
+import { AuthService } from "@thallesp/nestjs-better-auth";
 import type { IUserSession } from "../auth/auth.interfaces";
 import { DEV } from "src/common/consts/env";
+import { fromNodeHeaders } from "better-auth/node";
 
 @WebSocketGateway({
   cors: {
@@ -37,18 +39,52 @@ export class ChatGateway
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly authService: AuthService
+  ) {}
   private readonly logger = new Logger(ChatGateway.name);
+
+  private hasValidSession(session?: IUserSession): session is IUserSession {
+    return Boolean(session?.user?.id);
+  }
 
   afterInit(server: Server) {
     this.chatService.setServer(server);
     this.logger.log("ChatGateway initialized");
   }
 
-  handleConnection(
+  async handleConnection(
     @ConnectedSocket() client: Socket,
-    @Session() session: IUserSession
+    @Session() session?: IUserSession
   ) {
+    const cookies = client.handshake?.headers?.cookie;
+
+    if (!this.hasValidSession(session)) {
+      const resolved = await this.authService.api.getSession({
+        headers: fromNodeHeaders(client.handshake?.headers ?? [])
+      });
+      if (resolved) {
+        session = resolved as IUserSession;
+        (client as any).session = session;
+      }
+    }
+    if (DEV) {
+      this.logger.log(
+        `handleConnection client=${client.id} sessionUser=${session?.user?.id ?? "none"} auth=${JSON.stringify(
+          client.handshake?.auth ?? {}
+        )} origin=${client.handshake?.headers?.origin ?? "unknown"}`
+      );
+      this.logger.log(`handshake cookies=${cookies ?? "none"}`);
+    }
+
+    if (!this.hasValidSession(session)) {
+      DEV &&
+        this.logger.warn(`Disconnecting client ${client.id}: missing session`);
+      client.disconnect(true);
+      return;
+    }
+
     this.chatService.handleJoin(session.user.id, client.id);
     DEV && this.logger.log(`Client connected: ${client.id}`);
   }
@@ -61,6 +97,7 @@ export class ChatGateway
   @SubscribeMessage("echo")
   @AllowAnonymous()
   handleEcho(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
+    if (!DEV) return;
     this.logger.log(`Received message: ${data}`);
     client.emit("echo", data);
   }
@@ -69,8 +106,15 @@ export class ChatGateway
   async handleJoinRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: { room: string; context: EChatContext },
-    @Session() session: IUserSession
+    @Session() session?: IUserSession
   ) {
+    if (!this.hasValidSession(session)) {
+      DEV &&
+        this.logger.warn(`Join rejected for ${client.id}: missing session`);
+      client.disconnect(true);
+      throw new WsException("Unauthorized");
+    }
+
     if (
       typeof payload !== "object" ||
       !payload.room ||
@@ -104,8 +148,15 @@ export class ChatGateway
   handleRoomMessage(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: { room: string; message: string },
-    @Session() session: IUserSession
+    @Session() session?: IUserSession
   ) {
+    if (!this.hasValidSession(session)) {
+      DEV &&
+        this.logger.warn(`Message rejected for ${client.id}: missing session`);
+      client.disconnect(true);
+      throw new WsException("Unauthorized");
+    }
+
     if (typeof payload !== "object" || !payload.room || !payload.message)
       throw new WsException("Invalid message payload");
 
