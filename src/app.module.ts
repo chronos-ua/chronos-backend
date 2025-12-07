@@ -19,6 +19,7 @@ import { ChatModule } from "./modules/chat/chat.module";
 import { AiModule } from "./common/ai/ai.module";
 import { NotificationModule } from "./modules/notification/notification.module";
 import { DEV } from "./common/consts/env";
+import { HolidaysModule } from "./modules/holidays/holidays.module";
 
 @Module({
   imports: [
@@ -55,7 +56,8 @@ import { DEV } from "./common/consts/env";
     EventModule,
     ChatModule,
     AiModule,
-    NotificationModule
+    NotificationModule,
+    HolidaysModule
   ],
   controllers: [AppController],
   providers: [AppService]
