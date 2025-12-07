@@ -127,9 +127,10 @@ export class EventService {
         .exec();
     }
 
+    // Created & subscribed events
     return await this.eventModel
       .find({
-        creatorId: userObjectId
+        $or: [{ creatorId: userObjectId }, { "members.user": userObjectId }]
       })
       .lean()
       .exec();
