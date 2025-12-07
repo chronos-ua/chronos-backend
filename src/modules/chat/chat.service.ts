@@ -103,8 +103,9 @@ export class ChatService {
     }
     const messages = await this.chatMessageModel
       .find({
-        contextId: new Types.ObjectId(contextId),
-        contextType: contextType
+        contextId: new Types.ObjectId(contextId)
+        // TODO: miltiple context types
+        // contextType: contextType
       })
       .sort({ createdAt: 1 })
       .lean()
